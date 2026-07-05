@@ -1,0 +1,21 @@
+{
+  "verticalId": "mineria-cl",
+  "nombre": "Soporte Terreno Minero",
+  "terminologia": {
+    "activo": "Equipo",
+    "sitio": "Faena",
+    "sistema": "Sistema",
+    "pieza": "Pieza",
+    "falla": "Falla"
+  },
+  "branding": {
+    "logoUrl": "/favicon.svg",
+    "colorPrimario": "#f59e0b",
+    "colorAcento": "#38bdf8"
+  },
+  "pedidos": {
+    "whatsapp": "+56990000000",
+    "email": "pedidos@distribuidor-demo.cl",
+    "nombreDistribuidor": "Distribuidora de Maquinaria (demo)"
+  }
+}

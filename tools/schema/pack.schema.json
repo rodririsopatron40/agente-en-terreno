@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asistente-terreno/schema/pack.json",
+  "title": "Pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packId",
+    "version",
+    "activo",
+    "sistemas",
+    "piezas",
+    "aliases",
+    "fallas",
+    "procedimientos",
+    "kits",
+    "assets"
+  ],
+  "properties": {
+    "packId": { "type": "string", "minLength": 1 },
+    "version": { "type": "integer", "minimum": 1 },
+    "activo": { "$ref": "#/$defs/activo" },
+    "sistemas": { "type": "array", "items": { "$ref": "#/$defs/sistema" } },
+    "piezas": { "type": "array", "items": { "$ref": "#/$defs/pieza" } },
+    "aliases": { "type": "array", "items": { "$ref": "#/$defs/alias" } },
+    "fallas": { "type": "array", "items": { "$ref": "#/$defs/falla" } },
+    "procedimientos": { "type": "array", "items": { "$ref": "#/$defs/procedimiento" } },
+    "kits": { "type": "array", "items": { "$ref": "#/$defs/kit" } },
+    "assets": { "type": "array", "items": { "$ref": "#/$defs/asset" } }
+  },
+  "$defs": {
+    "activo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "modelo", "categoria"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "nombre": { "type": "string", "minLength": 1 },
+        "modelo": { "type": "string", "minLength": 1 },
+        "categoria": { "type": "string", "minLength": 1 },
+        "descripcion": { "type": "string" },
+        "foto": { "type": "string" }
+      }
+    },
+    "sistema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "activoId", "nombre", "orden"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "activoId": { "type": "string", "minLength": 1 },
+        "nombre": { "type": "string", "minLength": 1 },
+        "orden": { "type": "integer" },
+        "descripcion": { "type": "string" }
+      }
+    },
+    "pieza": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sistemaId",
+        "partNumber",
+        "partNumberNorm",
+        "nombre",
+        "descripcionVisual",
+        "specs",
+        "criticidad",
+        "fotos",
+        "kitIds"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sistemaId": { "type": "string", "minLength": 1 },
+        "partNumber": { "type": "string", "minLength": 1 },
+        "partNumberNorm": { "type": "string", "pattern": "^[a-z0-9]+$" },
+        "nombre": { "type": "string", "minLength": 1 },
+        "descripcionVisual": { "type": "string", "minLength": 1 },
+        "specs": {
+          "type": "object",
+          "additionalProperties": { "type": ["string", "number"] }
+        },
+        "criticidad": { "type": "integer", "enum": [1, 2, 3] },
+        "vidaUtilHrs": { "type": "number", "minimum": 0 },
+        "fotos": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["aislada"],
+          "properties": {
+            "aislada": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "instalada": { "type": "string" },
+            "desgastada": { "type": "string" }
+          }
+        },
+        "procedimientoId": { "type": "string" },
+        "kitIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "alias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["piezaId", "partNumber", "partNumberNorm", "tipo"],
+      "properties": {
+        "piezaId": { "type": "string", "minLength": 1 },
+        "partNumber": { "type": "string", "minLength": 1 },
+        "partNumberNorm": { "type": "string", "pattern": "^[a-z0-9]+$" },
+        "tipo": { "type": "string", "enum": ["oem", "compatible", "reemplazado_por"] },
+        "nota": { "type": "string" }
+      }
+    },
+    "falla": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sistemaId", "sintoma", "arbol"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sistemaId": { "type": "string", "minLength": 1 },
+        "sintoma": { "type": "string", "minLength": 1 },
+        "arbol": { "$ref": "#/$defs/nodo" }
+      }
+    },
+    "nodo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pregunta": { "type": "string" },
+        "opciones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["etiqueta", "siguiente"],
+            "properties": {
+              "etiqueta": { "type": "string", "minLength": 1 },
+              "siguiente": { "$ref": "#/$defs/nodo" }
+            }
+          }
+        },
+        "resultado": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["piezaIds", "procedimientoId"],
+          "properties": {
+            "piezaIds": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "procedimientoId": { "type": "string", "minLength": 1 },
+            "nota": { "type": "string" }
+          }
+        }
+      }
+    },
+    "procedimiento": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "titulo", "seguridad", "herramientas", "pasos"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "titulo": { "type": "string", "minLength": 1 },
+        "seguridad": { "type": "array", "items": { "type": "string" } },
+        "herramientas": { "type": "array", "items": { "type": "string" } },
+        "pasos": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["orden", "texto"],
+            "properties": {
+              "orden": { "type": "integer", "minimum": 1 },
+              "texto": { "type": "string", "minLength": 1 },
+              "foto": { "type": "string" },
+              "torqueNm": { "type": "number" },
+              "advertencia": { "type": "string" }
+            }
+          }
+        },
+        "duracionMin": { "type": "number", "minimum": 0 },
+        "kitRecomendadoId": { "type": "string" }
+      }
+    },
+    "kit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "partNumber", "piezaIds"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "nombre": { "type": "string", "minLength": 1 },
+        "partNumber": { "type": "string", "minLength": 1 },
+        "piezaIds": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruta", "hash", "kb"],
+      "properties": {
+        "ruta": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "kb": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

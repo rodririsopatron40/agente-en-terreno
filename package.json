@@ -1,0 +1,22 @@
+{
+  "name": "asistente-terreno",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Asistente de reparaciones en terreno (multi-rubro). Plataforma de contenido offline-first: la app no sabe de dominio; todo vive en vertical.config.json + content packs.",
+  "scripts": {
+    "gen-mock": "tsx tools/gen-mock-pack.ts",
+    "validate-pack": "tsx tools/validate-pack.ts app/public/packs/hidromax-bx40/pack.json",
+    "validate-config": "tsx tools/validate-config.ts app/public/config",
+    "validate": "npm run validate-pack && npm run validate-config",
+    "typecheck:tools": "tsc -p tools/tsconfig.json"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.0.2",
+    "@types/node": "^26.1.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3"
+  }
+}

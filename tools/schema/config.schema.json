@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asistente-terreno/schema/config.json",
+  "title": "VerticalConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verticalId", "nombre", "terminologia", "branding", "pedidos"],
+  "properties": {
+    "verticalId": { "type": "string", "minLength": 1 },
+    "nombre": { "type": "string", "minLength": 1 },
+    "terminologia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["activo", "sitio", "sistema", "pieza", "falla"],
+      "properties": {
+        "activo": { "type": "string", "minLength": 1 },
+        "sitio": { "type": "string", "minLength": 1 },
+        "sistema": { "type": "string", "minLength": 1 },
+        "pieza": { "type": "string", "minLength": 1 },
+        "falla": { "type": "string", "minLength": 1 }
+      }
+    },
+    "branding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["logoUrl", "colorPrimario", "colorAcento"],
+      "properties": {
+        "logoUrl": { "type": "string", "minLength": 1 },
+        "colorPrimario": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "colorAcento": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+      }
+    },
+    "pedidos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nombreDistribuidor"],
+      "properties": {
+        "whatsapp": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "nombreDistribuidor": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

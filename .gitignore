@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+
+# Build del app
+app/dist/
+app/dev-dist/
+
+# Pack mock generado (reproducible con: npm run gen-mock)
+app/public/packs/
+
+# Logs y temporales
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.sw?

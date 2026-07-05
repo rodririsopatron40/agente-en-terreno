@@ -1,0 +1,20 @@
+{
+  "verticalId": "automotriz-cl",
+  "nombre": "Taller Automotriz Pro",
+  "terminologia": {
+    "activo": "Vehiculo",
+    "sitio": "Taller",
+    "sistema": "Sistema",
+    "pieza": "Repuesto",
+    "falla": "Sintoma"
+  },
+  "branding": {
+    "logoUrl": "/favicon.svg",
+    "colorPrimario": "#22c55e",
+    "colorAcento": "#ef4444"
+  },
+  "pedidos": {
+    "email": "repuestos@taller-demo.cl",
+    "nombreDistribuidor": "Repuestos Automotriz (demo)"
+  }
+}

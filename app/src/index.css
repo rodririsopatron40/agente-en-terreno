@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+/* Valores por defecto; applyBranding() los sobrescribe desde vertical.config.json. */
+:root {
+  --color-primario: #f59e0b;
+  --color-acento: #38bdf8;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0a0a0a;
+}
