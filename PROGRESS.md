@@ -14,4 +14,17 @@ Dexie (packs+meta) + repositorio (import / update delta-por-hash / delete / acti
 
 **Nota para Fase 2:** hay dos piezas "sello de piston" (alta/baja); "sello piston" devuelve ambas (la 3115-2871-00 incluida). El DoD de Fase 2 pide que las tres busquedas den la MISMA pieza -> ajustar ranking o contenido.
 
-**Siguiente (Fase 2 — Catalogo y busqueda):** navegacion jerarquica pulida, fotos swipeables, supersesion visible, targets >=48px a una mano, alto contraste. DoD: `3115-2871-00` / `3115287100` / `sello piston` -> misma pieza; flujo con una mano en viewport 380px.
+## Fase 2 — Catalogo y busqueda — HECHO (2026-07-06)
+Ranking de busqueda determinista + pulido de UI mobile.
+
+**Decision del empate "sello piston" (ranking vs contenido): RANKING.** El contenido es correcto (ambas SON sellos de piston, alta/baja); renombrar seria mentir sobre el dominio. El orden es: score de MiniSearch desc -> criticidad desc -> partNumberNorm asc. Verificado empiricamente: para "sello piston" el score crudo ya separa las piezas (`3115-2871-00` alta = 17.2 vs `3115-2872-00` baja = 9.7), asi que la alta gana por score y queda primera. El desempate criticidad/partNumber NO decide este caso; es una garantia de determinismo por si dos piezas empatan el score exacto (scores iguales -> mismo orden siempre). Fix en `app/src/data/search.ts`.
+
+**UI (mobile, una mano, 380px):**
+- Fotos swipeables: carrusel `snap-x snap-mandatory`, items 82% ancho (la siguiente asoma), etiqueta por foto (Pieza/Instalada/Desgastada) + hint "Desliza". `PiezaDetail.tsx`.
+- Supersesion visible en dos puntos: banner ambar en el catalogo al buscar un numero antiguo ("X es un numero antiguo. Reemplazado por Y"), y banner "Reemplaza a X. Usa este numero al pedir" en la ficha vigente. `Catalogo.tsx` / `PiezaDetail.tsx`.
+- Targets >=48px: tabs 44->48, Volver 44->48 (input y lista ya cumplian: 48/62).
+- Contraste subido a WCAG AA: textos secundarios neutral-500 -> neutral-400, nombres/valores a neutral-50/100, bordes neutral-800 -> neutral-700. Dark mode ya era default.
+
+**Verificado:** `npm test` verde (las 3 consultas dan 3115-2871-00 primera + orden estable); build limpio; navegador headless a 380px: 3 busquedas OK en vivo, banner supersesion OK, carrusel 3 fotos con snap, targets medidos 48/48/62px, sin errores de consola. Screenshots en scratchpad.
+
+**Siguiente (Fase 3):** ver plan.

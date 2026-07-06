@@ -38,6 +38,12 @@ export function loadIndex(json: string): MiniSearch<PiezaDoc> {
 
 // Busqueda combinada (plan 5.2): primero exacto por part number normalizado
 // (pieza y alias, resolviendo supersesion), luego fuzzy sobre nombre/descripcion.
+// El orden primario de los resultados fuzzy es el score de MiniSearch (que ya
+// resuelve casos como "sello piston" -> la de alta presion puntua mas alto que la
+// de baja). El desempate criticidad desc -> partNumber asc es una GARANTIA de
+// determinismo: solo actua cuando dos piezas empatan el score exacto, para que la
+// misma consulta devuelva SIEMPRE la misma pieza primera. No altera el ranking
+// cuando los scores difieren.
 export function searchPiezas(query: string, pack: Pack, ms: MiniSearch<PiezaDoc>): Pieza[] {
   const q = query.trim()
   if (!q) return []
@@ -58,8 +64,16 @@ export function searchPiezas(query: string, pack: Pack, ms: MiniSearch<PiezaDoc>
     for (const a of pack.aliases) if (a.partNumberNorm === norm) push(a.piezaId)
   }
 
-  for (const r of ms.search(q, { prefix: true, fuzzy: 0.2, combineWith: 'OR' })) {
-    push(r.id as string)
-  }
+  const fuzzy = ms
+    .search(q, { prefix: true, fuzzy: 0.2, combineWith: 'OR' })
+    .map((r) => ({ p: byId.get(r.id as string), score: r.score }))
+    .filter((x): x is { p: Pieza; score: number } => Boolean(x.p))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        b.p.criticidad - a.p.criticidad ||
+        a.p.partNumberNorm.localeCompare(b.p.partNumberNorm),
+    )
+  for (const { p } of fuzzy) push(p.id)
   return hits
 }

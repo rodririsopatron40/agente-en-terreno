@@ -193,8 +193,8 @@ function Tab({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`min-h-11 border-b-2 px-3 text-sm disabled:opacity-30 ${
-        activo ? 'text-neutral-100' : 'border-transparent text-neutral-500'
+      className={`min-h-12 border-b-2 px-4 text-sm font-medium disabled:opacity-30 ${
+        activo ? 'text-neutral-100' : 'border-transparent text-neutral-400'
       }`}
       style={activo ? { borderColor: 'var(--color-acento)' } : undefined}
     >

@@ -20,13 +20,17 @@ function check(nombre: string, cond: boolean) {
 const ms = buildIndex(pack)
 const target = pack.piezas.find((p) => p.partNumber === '3115-2871-00')!
 
-// Part number en dos formatos -> misma pieza, primera
-for (const q of ['3115-2871-00', '3115287100']) {
+// DoD Fase 2: las tres consultas devuelven la MISMA pieza primera.
+for (const q of ['3115-2871-00', '3115287100', 'sello piston']) {
   const res = searchPiezas(q, pack, ms)
   check(`"${q}" -> pieza correcta primera`, res.length > 0 && res[0].id === target.id)
 }
-// Texto -> la pieza aparece en resultados
-check('"sello piston" -> pieza en resultados', searchPiezas('sello piston', pack, ms).some((p) => p.id === target.id))
+// El desempate es estable: repetir la consulta no cambia el orden.
+{
+  const a = searchPiezas('sello piston', pack, ms).map((p) => p.id)
+  const b = searchPiezas('sello piston', pack, ms).map((p) => p.id)
+  check('"sello piston" -> orden estable entre llamadas', a.join(',') === b.join(','))
+}
 // Basura no rompe y no inventa
 check('"zapato xyz" -> sin resultados, sin crash', searchPiezas('zapato xyz', pack, ms).length === 0)
 // Alias reemplazado_por -> pieza vigente
