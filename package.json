@@ -9,6 +9,7 @@
     "validate-pack": "tsx tools/validate-pack.ts app/public/packs/hidromax-bx40/pack.json",
     "validate-config": "tsx tools/validate-config.ts app/public/config",
     "validate": "npm run validate-pack && npm run validate-config",
+    "test": "tsx tools/test-pack.ts",
     "typecheck:tools": "tsc -p tools/tsconfig.json"
   },
   "devDependencies": {

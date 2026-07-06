@@ -746,6 +746,20 @@ const pack: Pack = {
 
 writeFileSync(join(OUT_DIR, 'pack.json'), JSON.stringify(pack, null, 2) + '\n', 'utf8')
 
+// Registro de packs disponibles para el gestor de descargas (Fase 1).
+const packJsonKb = statSync(join(OUT_DIR, 'pack.json')).size / 1024
+const sizeMb = Math.round(((packJsonKb + assets.reduce((a, x) => a + x.kb, 0)) / 1024) * 100) / 100
+const indexEntry = {
+  packId: pack.packId,
+  path: 'hidromax-bx40',
+  nombre: activo.nombre,
+  categoria: activo.categoria,
+  version: pack.version,
+  piezas: piezas.length,
+  sizeMb,
+}
+writeFileSync(join(OUT_DIR, '..', 'index.json'), JSON.stringify([indexEntry], null, 2) + '\n', 'utf8')
+
 const totalMb = Math.round((assets.reduce((a, x) => a + x.kb, 0) / 1024) * 100) / 100
 console.log(
   `Pack generado: ${piezas.length} piezas, ${kits.length} kits, ${fallas.length} fallas, ` +

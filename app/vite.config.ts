@@ -25,10 +25,27 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Los packs (grandes) NO se precachean; se cachean en runtime en Fase 1.
-        globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        // App shell + config se precachean; los packs (grandes) NO.
+        globPatterns: ['**/*.{js,css,html,svg,woff2,json,webmanifest}'],
+        globIgnores: ['**/packs/**'],
+        navigateFallback: 'index.html',
         navigateFallbackDenylist: [/^\/packs\//],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        runtimeCaching: [
+          {
+            // Solo imagenes de packs y solo peticiones sin query. El importador
+            // descarga con ?dl=1 (excluido aca) para verificar el hash sobre
+            // bytes frescos; las <img> sin query se sirven cache-first desde
+            // 'pack-assets', ya poblada por el importador -> funcionan offline.
+            urlPattern: ({ url }) =>
+              /\/packs\/.*\.(png|webp|jpe?g|svg)$/.test(url.pathname) && url.search === '',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pack-assets',
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
       },
       devOptions: { enabled: false },
     }),
