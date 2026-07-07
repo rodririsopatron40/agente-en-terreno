@@ -17,10 +17,10 @@ export function OnlineBadge() {
       className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs ${
         online ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'
       }`}
-      title={online ? 'Conectado' : 'Sin conexion (modo offline)'}
+      title={online ? 'Conectado' : 'Sin conexión (modo offline)'}
     >
       <span className={`h-2 w-2 rounded-full ${online ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-      {online ? 'En linea' : 'Offline'}
+      {online ? 'En línea' : 'Offline'}
     </span>
   )
 }

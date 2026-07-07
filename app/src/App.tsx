@@ -109,7 +109,7 @@ function App() {
 
   const t = config.terminologia
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col bg-neutral-950 text-neutral-100">
+    <main className="mx-auto flex min-h-svh max-w-2xl flex-col bg-neutral-950 text-neutral-100">
       <header className="sticky top-0 z-[5] flex items-center justify-between gap-3 border-b border-neutral-800 bg-neutral-950/90 px-4 py-3 backdrop-blur">
         <div className="min-w-0">
           <h1 className="truncate text-base font-semibold" style={{ color: 'var(--color-primario)' }}>
@@ -136,7 +136,7 @@ function App() {
 
       <nav className="flex gap-1 border-b border-neutral-800 px-4">
         <Tab activo={vista === 'catalogo'} disabled={!active} onClick={() => setVista('catalogo')}>
-          Catalogo
+          Catálogo
         </Tab>
         <Tab activo={vista === 'packs'} onClick={() => setVista('packs')}>
           Packs
@@ -149,7 +149,7 @@ function App() {
             <Catalogo pack={active.pack} ms={active.ms} t={t} onSelect={setPieza} />
           ) : (
             <p className="text-sm text-neutral-500">
-              Descarga un {t.activo.toLowerCase()} en la pestana Packs para empezar.
+              Descarga un {t.activo.toLowerCase()} en la pestaña Packs para empezar.
             </p>
           )
         ) : (

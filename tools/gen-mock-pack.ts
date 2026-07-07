@@ -21,8 +21,13 @@ import type {
   AssetManifest,
   Activo,
   Criticidad,
+  Spec,
 } from '../app/src/domain/types'
 import { normalizePartNumber } from '../app/src/domain/partNumber'
+
+// Helpers para specs legibles: texto (sin unidad) y numero (con unidad opcional).
+const txt = (etiqueta: string, valor: string): Spec => ({ etiqueta, valor })
+const num = (etiqueta: string, valor: number, unidad?: string): Spec => ({ etiqueta, valor, unidad })
 
 const here = dirname(fileURLToPath(import.meta.url))
 const OUT_DIR = join(here, '../app/public/packs/hidromax-bx40')
@@ -33,10 +38,10 @@ const activo: Activo = {
   id: 'act-bx40',
   nombre: 'HidroMax BX-40',
   modelo: 'BX-40',
-  categoria: 'Martillo hidraulico',
+  categoria: 'Martillo hidráulico',
   descripcion:
-    'Martillo hidraulico de rango medio para excavadora 18-26 t. Energia de impacto 4000 J, ' +
-    'frecuencia 400-900 golpes/min. Modelo ficticio de demostracion.',
+    'Martillo hidráulico de rango medio para excavadora 18-26 t. Energía de impacto 4000 J, ' +
+    'frecuencia 400-900 golpes/min. Modelo ficticio de demostración.',
   foto: `${ASSETS_SUBDIR}/activo-bx40.png`,
 }
 
@@ -50,23 +55,23 @@ const sistemas: Sistema[] = [
   {
     id: SIS.percusion,
     activoId: activo.id,
-    nombre: 'Percusion',
+    nombre: 'Percusión',
     orden: 1,
-    descripcion: 'Piston, valvula distribuidora y componentes que generan el golpe.',
+    descripcion: 'Pistón, válvula distribuidora y componentes que generan el golpe.',
   },
   {
     id: SIS.hidraulico,
     activoId: activo.id,
-    nombre: 'Hidraulico',
+    nombre: 'Hidráulico',
     orden: 2,
-    descripcion: 'Acumulador, mangueras, filtros y valvulas de presion.',
+    descripcion: 'Acumulador, mangueras, filtros y válvulas de presión.',
   },
   {
     id: SIS.retencion,
     activoId: activo.id,
-    nombre: 'Retencion de herramienta',
+    nombre: 'Retención de herramienta',
     orden: 3,
-    descripcion: 'Bujes, pasadores y topes que sostienen y guian la herramienta.',
+    descripcion: 'Bujes, pasadores y topes que sostienen y guían la herramienta.',
   },
 ]
 
@@ -84,7 +89,7 @@ interface PiezaSeed {
   partNumber: string
   nombre: string
   descripcionVisual: string
-  specs: Record<string, string | number>
+  specs: Spec[]
   criticidad: Criticidad
   vidaUtilHrs?: number
   procedimientoId?: string
@@ -97,11 +102,11 @@ const seeds: PiezaSeed[] = [
     id: 'p-piston',
     sistemaId: SIS.percusion,
     partNumber: '3115-2010-00',
-    nombre: 'Piston de impacto',
+    nombre: 'Pistón de impacto',
     descripcionVisual:
       'Cilindro de acero pulido de ~600 mm, superficie espejo con dos bandas de sello mecanizadas ' +
       'cerca del extremo de golpeo; el otro extremo es plano y mate.',
-    specs: { material: 'Acero forjado', largoMm: 600, diametroMm: 95, pesoKg: 28 },
+    specs: [txt('Material', 'Acero forjado'), num('Largo', 600, 'mm'), num('Diámetro', 95, 'mm'), num('Peso', 28, 'kg')],
     criticidad: 3,
     vidaUtilHrs: 3000,
     procedimientoId: 'proc-cambio-sellos-piston',
@@ -111,11 +116,11 @@ const seeds: PiezaSeed[] = [
     id: 'p-sello-piston-alta',
     sistemaId: SIS.percusion,
     partNumber: '3115-2871-00',
-    nombre: 'Sello de piston alta presion',
+    nombre: 'Sello de pistón alta presión',
     descripcionVisual:
-      'Anillo de poliuretano ambar de ~95 mm de diametro, seccion en U, labio interno biselado. ' +
-      'Se instala en la ranura superior del piston.',
-    specs: { material: 'Poliuretano', diametroMm: 95, dureza: '92 Shore A' },
+      'Anillo de poliuretano ámbar de ~95 mm de diámetro, sección en U, labio interno biselado. ' +
+      'Se instala en la ranura superior del pistón.',
+    specs: [txt('Material', 'Poliuretano'), num('Diámetro', 95, 'mm'), txt('Dureza', '92 Shore A')],
     criticidad: 3,
     rolesExtra: ['desgastada'],
   },
@@ -123,21 +128,21 @@ const seeds: PiezaSeed[] = [
     id: 'p-sello-piston-baja',
     sistemaId: SIS.percusion,
     partNumber: '3115-2872-00',
-    nombre: 'Sello de piston baja presion',
+    nombre: 'Sello de pistón baja presión',
     descripcionVisual:
-      'Anillo de nitrilo negro de ~95 mm, seccion cuadrada con resorte energizante metalico visible ' +
+      'Anillo de nitrilo negro de ~95 mm, sección cuadrada con resorte energizante metálico visible ' +
       'en la cara interior.',
-    specs: { material: 'Nitrilo (NBR)', diametroMm: 95, dureza: '80 Shore A' },
+    specs: [txt('Material', 'Nitrilo (NBR)'), num('Diámetro', 95, 'mm'), txt('Dureza', '80 Shore A')],
     criticidad: 2,
   },
   {
     id: 'p-buje-piston',
     sistemaId: SIS.percusion,
     partNumber: '3115-2015-00',
-    nombre: 'Buje guia de piston',
+    nombre: 'Buje guía de pistón',
     descripcionVisual:
-      'Manguito de bronce dorado de ~100 mm con ranuras de lubricacion helicoidales en la cara interna.',
-    specs: { material: 'Bronce SAE 660', diametroExtMm: 110, diametroIntMm: 95 },
+      'Manguito de bronce dorado de ~100 mm con ranuras de lubricación helicoidales en la cara interna.',
+    specs: [txt('Material', 'Bronce SAE 660'), num('Diámetro exterior', 110, 'mm'), num('Diámetro interior', 95, 'mm')],
     criticidad: 2,
     vidaUtilHrs: 4000,
   },
@@ -145,11 +150,11 @@ const seeds: PiezaSeed[] = [
     id: 'p-valvula-distribuidora',
     sistemaId: SIS.percusion,
     partNumber: '3115-2050-00',
-    nombre: 'Valvula distribuidora',
+    nombre: 'Válvula distribuidora',
     descripcionVisual:
-      'Carrete de acero cilindrico de ~120 mm con varias gargantas anulares mecanizadas; superficie ' +
+      'Carrete de acero cilíndrico de ~120 mm con varias gargantas anulares mecanizadas; superficie ' +
       'muy pulida, sin roscas.',
-    specs: { material: 'Acero nitrurado', largoMm: 120, diametroMm: 55 },
+    specs: [txt('Material', 'Acero nitrurado'), num('Largo', 120, 'mm'), num('Diámetro', 55, 'mm')],
     criticidad: 3,
     rolesExtra: ['instalada'],
   },
@@ -157,10 +162,10 @@ const seeds: PiezaSeed[] = [
     id: 'p-resorte-valvula',
     sistemaId: SIS.percusion,
     partNumber: '3115-2051-00',
-    nombre: 'Resorte de valvula',
+    nombre: 'Resorte de válvula',
     descripcionVisual:
-      'Resorte helicoidal de compresion, alambre de ~4 mm, acabado fosfatado gris oscuro, ~60 mm de largo.',
-    specs: { material: 'Acero de resorte', largoMm: 60, hilos: 8 },
+      'Resorte helicoidal de compresión, alambre de ~4 mm, acabado fosfatado gris oscuro, ~60 mm de largo.',
+    specs: [txt('Material', 'Acero de resorte'), num('Largo', 60, 'mm'), num('Hilos', 8)],
     criticidad: 1,
   },
   {
@@ -170,8 +175,8 @@ const seeds: PiezaSeed[] = [
     nombre: 'Tapa trasera',
     descripcionVisual:
       'Bloque de acero rectangular con cuatro perforaciones pasantes en las esquinas y dos puertos ' +
-      'hidraulicos roscados en la cara frontal.',
-    specs: { material: 'Acero', pesoKg: 22 },
+      'hidráulicos roscados en la cara frontal.',
+    specs: [txt('Material', 'Acero'), num('Peso', 22, 'kg')],
     criticidad: 2,
   },
   {
@@ -181,7 +186,7 @@ const seeds: PiezaSeed[] = [
     nombre: 'Perno lateral tensor',
     descripcionVisual:
       'Barra roscada larga de ~700 mm, acero negro, con tuerca hexagonal grande en un extremo.',
-    specs: { material: 'Acero grado 12.9', largoMm: 700, roscaMm: 'M30' },
+    specs: [txt('Material', 'Acero grado 12.9'), num('Largo', 700, 'mm'), txt('Rosca', 'M30')],
     criticidad: 2,
     procedimientoId: 'proc-servicio-500',
   },
@@ -190,11 +195,11 @@ const seeds: PiezaSeed[] = [
     id: 'p-acumulador',
     sistemaId: SIS.hidraulico,
     partNumber: '3115-3010-00',
-    nombre: 'Acumulador de alta presion',
+    nombre: 'Acumulador de alta presión',
     descripcionVisual:
-      'Cuerpo cilindrico de acero con tapa abombada y valvula de carga de gas en el tope; etiqueta ' +
-      'de presion de nitrogeno visible.',
-    specs: { material: 'Acero', presionGasBar: 60, capacidadCc: 500 },
+      'Cuerpo cilíndrico de acero con tapa abombada y válvula de carga de gas en el tope; etiqueta ' +
+      'de presión de nitrógeno visible.',
+    specs: [txt('Material', 'Acero'), num('Presión de gas', 60, 'bar'), num('Capacidad', 500, 'cc')],
     criticidad: 3,
     procedimientoId: 'proc-cambio-acumulador',
     rolesExtra: ['instalada'],
@@ -205,8 +210,8 @@ const seeds: PiezaSeed[] = [
     partNumber: '3115-3011-00',
     nombre: 'Membrana de acumulador',
     descripcionVisual:
-      'Diafragma de elastomero negro con forma de campana, flexible, con reborde de montaje grueso en el borde.',
-    specs: { material: 'Elastomero HNBR', diametroMm: 120 },
+      'Diafragma de elastómero negro con forma de campana, flexible, con reborde de montaje grueso en el borde.',
+    specs: [txt('Material', 'Elastómero HNBR'), num('Diámetro', 120, 'mm')],
     criticidad: 3,
   },
   {
@@ -214,38 +219,38 @@ const seeds: PiezaSeed[] = [
     sistemaId: SIS.hidraulico,
     partNumber: '3115-3012-00',
     nombre: 'O-ring de acumulador',
-    descripcionVisual: 'Junta torica negra de ~120 mm de diametro y ~5 mm de seccion, superficie lisa.',
-    specs: { material: 'Viton (FKM)', diametroMm: 120, seccionMm: 5 },
+    descripcionVisual: 'Junta tórica negra de ~120 mm de diámetro y ~5 mm de sección, superficie lisa.',
+    specs: [txt('Material', 'Vitón (FKM)'), num('Diámetro', 120, 'mm'), num('Sección', 5, 'mm')],
     criticidad: 1,
   },
   {
     id: 'p-manguera-alta',
     sistemaId: SIS.hidraulico,
     partNumber: '3115-3020-00',
-    nombre: 'Manguera de alta presion',
+    nombre: 'Manguera de alta presión',
     descripcionVisual:
-      'Manguera hidraulica negra con trenzado de acero visible en los extremos y racores prensados a 90 grados.',
-    specs: { material: 'Caucho + malla acero', largoMm: 850, presionMaxBar: 350 },
+      'Manguera hidráulica negra con trenzado de acero visible en los extremos y racores prensados a 90 grados.',
+    specs: [txt('Material', 'Caucho + malla acero'), num('Largo', 850, 'mm'), num('Presión máxima', 350, 'bar')],
     criticidad: 2,
   },
   {
     id: 'p-acople-hidraulico',
     sistemaId: SIS.hidraulico,
     partNumber: '3115-3021-00',
-    nombre: 'Acople hidraulico rapido',
+    nombre: 'Acople hidráulico rápido',
     descripcionVisual:
-      'Conector metalico cromado tipo push-pull con collar moleteado deslizante y guardapolvo de goma.',
-    specs: { material: 'Acero cromado', roscaMm: 'M22', presionMaxBar: 350 },
+      'Conector metálico cromado tipo push-pull con collar moleteado deslizante y guardapolvo de goma.',
+    specs: [txt('Material', 'Acero cromado'), txt('Rosca', 'M22'), num('Presión máxima', 350, 'bar')],
     criticidad: 2,
   },
   {
     id: 'p-valvula-alivio',
     sistemaId: SIS.hidraulico,
     partNumber: '3115-3030-00',
-    nombre: 'Valvula de alivio de presion',
+    nombre: 'Válvula de alivio de presión',
     descripcionVisual:
-      'Cartucho hexagonal de laton con tornillo de ajuste sellado con laca roja y o-rings de colores en el cuerpo.',
-    specs: { material: 'Laton', ajusteBar: 180 },
+      'Cartucho hexagonal de latón con tornillo de ajuste sellado con laca roja y o-rings de colores en el cuerpo.',
+    specs: [txt('Material', 'Latón'), num('Ajuste', 180, 'bar')],
     criticidad: 3,
   },
   {
@@ -254,8 +259,8 @@ const seeds: PiezaSeed[] = [
     partNumber: '3115-3040-00',
     nombre: 'Filtro de retorno',
     descripcionVisual:
-      'Cartucho cilindrico con malla plisada blanca/beige y tapas metalicas en ambos extremos.',
-    specs: { material: 'Celulosa/sintetico', micras: 10, vidaUtilHrs: 500 },
+      'Cartucho cilíndrico con malla plisada blanca/beige y tapas metálicas en ambos extremos.',
+    specs: [txt('Material', 'Celulosa/sintético'), num('Filtración', 10, 'µm')],
     criticidad: 1,
     vidaUtilHrs: 500,
     procedimientoId: 'proc-servicio-500',
@@ -268,9 +273,9 @@ const seeds: PiezaSeed[] = [
     partNumber: '3115-4010-00',
     nombre: 'Buje frontal',
     descripcionVisual:
-      'Casquillo de acero endurecido de gran diametro (~150 mm) con desgaste tipico en la cara interna; ' +
-      'exterior mecanizado con chaflan.',
-    specs: { material: 'Acero endurecido', diametroExtMm: 150, diametroIntMm: 100 },
+      'Casquillo de acero endurecido de gran diámetro (~150 mm) con desgaste típico en la cara interna; ' +
+      'exterior mecanizado con chaflán.',
+    specs: [txt('Material', 'Acero endurecido'), num('Diámetro exterior', 150, 'mm'), num('Diámetro interior', 100, 'mm')],
     criticidad: 3,
     vidaUtilHrs: 2000,
     procedimientoId: 'proc-cambio-buje-frontal',
@@ -280,10 +285,10 @@ const seeds: PiezaSeed[] = [
     id: 'p-pasador-retencion',
     sistemaId: SIS.retencion,
     partNumber: '3115-4011-00',
-    nombre: 'Pasador de retencion',
+    nombre: 'Pasador de retención',
     descripcionVisual:
-      'Barra cilindrica de acero de ~180 mm con una cara plana rebajada a lo largo y un extremo achaflanado.',
-    specs: { material: 'Acero', largoMm: 180, diametroMm: 40 },
+      'Barra cilíndrica de acero de ~180 mm con una cara plana rebajada a lo largo y un extremo achaflanado.',
+    specs: [txt('Material', 'Acero'), num('Largo', 180, 'mm'), num('Diámetro', 40, 'mm')],
     criticidad: 2,
   },
   {
@@ -293,7 +298,7 @@ const seeds: PiezaSeed[] = [
     nombre: 'Tope de herramienta',
     descripcionVisual:
       'Bloque de acero en forma de C que abraza la herramienta; caras de contacto con marcas de impacto.',
-    specs: { material: 'Acero', pesoKg: 6 },
+    specs: [txt('Material', 'Acero'), num('Peso', 6, 'kg')],
     criticidad: 2,
   },
   {
@@ -302,8 +307,8 @@ const seeds: PiezaSeed[] = [
     partNumber: '3115-4013-00',
     nombre: 'Guardapolvo frontal',
     descripcionVisual:
-      'Anillo de goma flexible negro con labios concentricos hacia adentro, seccion delgada, ~110 mm.',
-    specs: { material: 'Poliuretano', diametroMm: 110 },
+      'Anillo de goma flexible negro con labios concéntricos hacia adentro, sección delgada, ~110 mm.',
+    specs: [txt('Material', 'Poliuretano'), num('Diámetro', 110, 'mm')],
     criticidad: 1,
   },
   {
@@ -312,8 +317,8 @@ const seeds: PiezaSeed[] = [
     partNumber: '3115-4014-00',
     nombre: 'Buje inferior',
     descripcionVisual:
-      'Casquillo de bronce mas corto que el frontal, superficie interna con ranuras axiales de lubricacion.',
-    specs: { material: 'Bronce', diametroExtMm: 140, diametroIntMm: 100 },
+      'Casquillo de bronce más corto que el frontal, superficie interna con ranuras axiales de lubricación.',
+    specs: [txt('Material', 'Bronce'), num('Diámetro exterior', 140, 'mm'), num('Diámetro interior', 100, 'mm')],
     criticidad: 2,
     vidaUtilHrs: 2500,
   },
@@ -336,7 +341,7 @@ const kits: Kit[] = [
   },
   {
     id: 'kit-sellos-hidraulico',
-    nombre: 'Kit de sellos hidraulico',
+    nombre: 'Kit de sellos hidráulico',
     partNumber: '3115-9100-00',
     piezaIds: [
       'p-sello-piston-alta',
@@ -410,7 +415,7 @@ const aliasesRaw: Omit<PartNumberAlias, 'partNumberNorm'>[] = [
     piezaId: 'p-buje-frontal',
     partNumber: '3115-4009-00',
     tipo: 'reemplazado_por',
-    nota: 'Numero antiguo, reemplazado por 3115-4010-00',
+    nota: 'Número antiguo, reemplazado por 3115-4010-00',
   },
   { piezaId: 'p-filtro-retorno', partNumber: 'HF-3040', tipo: 'compatible', nota: 'Equivalente aftermarket' },
   { piezaId: 'p-oring-acumulador', partNumber: 'OR-3012', tipo: 'oem' },
@@ -430,19 +435,19 @@ const aliases: PartNumberAlias[] = aliasesRaw.map((a) => ({
 const procedimientos: Procedimiento[] = [
   {
     id: 'proc-cambio-sellos-piston',
-    titulo: 'Cambio de sellos de piston',
+    titulo: 'Cambio de sellos de pistón',
     seguridad: [
-      'Despresurizar el circuito hidraulico y bloquear el equipo (LOTO) antes de abrir.',
-      'El acumulador puede conservar presion residual de gas: descargarlo primero.',
-      'Piezas pesadas: usar apoyo mecanico para el piston (28 kg).',
+      'Despresurizar el circuito hidráulico y bloquear el equipo (LOTO) antes de abrir.',
+      'El acumulador puede conservar presión residual de gas: descargarlo primero.',
+      'Piezas pesadas: usar apoyo mecánico para el pistón (28 kg).',
     ],
-    herramientas: ['Llave dinamometrica', 'Extractor de sellos', 'Juego de llaves Allen', 'Grasa de montaje'],
+    herramientas: ['Llave dinamométrica', 'Extractor de sellos', 'Juego de llaves Allen', 'Grasa de montaje'],
     pasos: [
-      { orden: 1, texto: 'Despresurizar el circuito y desconectar las mangueras.', advertencia: 'El aceite a presion puede penetrar la piel.' },
+      { orden: 1, texto: 'Despresurizar el circuito y desconectar las mangueras.', advertencia: 'El aceite a presión puede penetrar la piel.' },
       { orden: 2, texto: 'Aflojar y retirar los pernos laterales en secuencia cruzada.' },
-      { orden: 3, texto: 'Extraer el piston y retirar los sellos gastados.', foto: fotoDe('3115201000', 'desgastada') },
+      { orden: 3, texto: 'Extraer el pistón y retirar los sellos gastados.', foto: fotoDe('3115201000', 'desgastada') },
       { orden: 4, texto: 'Limpiar las ranuras e instalar los sellos nuevos del kit con grasa de montaje.', foto: fotoDe('3115287100', 'aislada') },
-      { orden: 5, texto: 'Montar el piston y apretar los pernos laterales al torque indicado.', torqueNm: 320, advertencia: 'Apretar en secuencia cruzada, en dos etapas.' },
+      { orden: 5, texto: 'Montar el pistón y apretar los pernos laterales al torque indicado.', torqueNm: 320, advertencia: 'Apretar en secuencia cruzada, en dos etapas.' },
     ],
     duracionMin: 90,
     kitRecomendadoId: 'kit-sellos-hidraulico',
@@ -452,14 +457,14 @@ const procedimientos: Procedimiento[] = [
     titulo: 'Cambio de buje frontal',
     seguridad: [
       'Bloquear el equipo (LOTO) y retirar la herramienta antes de comenzar.',
-      'Bordes con rebabas: usar guantes de proteccion.',
+      'Bordes con rebabas: usar guantes de protección.',
     ],
-    herramientas: ['Prensa hidraulica o extractor de bujes', 'Mazo de goma', 'Calibrador'],
+    herramientas: ['Prensa hidráulica o extractor de bujes', 'Mazo de goma', 'Calibrador'],
     pasos: [
-      { orden: 1, texto: 'Retirar el pasador de retencion y la herramienta.' },
+      { orden: 1, texto: 'Retirar el pasador de retención y la herramienta.' },
       { orden: 2, texto: 'Extraer el buje frontal gastado con el extractor.', foto: fotoDe('3115401000', 'desgastada') },
       { orden: 3, texto: 'Medir el alojamiento y verificar tolerancia antes de montar.' },
-      { orden: 4, texto: 'Instalar el buje nuevo a presion, alineado con la marca.', foto: fotoDe('3115401000', 'instalada') },
+      { orden: 4, texto: 'Instalar el buje nuevo a presión, alineado con la marca.', foto: fotoDe('3115401000', 'instalada') },
     ],
     duracionMin: 60,
   },
@@ -468,9 +473,9 @@ const procedimientos: Procedimiento[] = [
     titulo: 'Servicio programado 500 hrs',
     seguridad: [
       'Bloquear el equipo (LOTO) antes de intervenir.',
-      'Descargar presion de gas y aceite antes de abrir componentes.',
+      'Descargar presión de gas y aceite antes de abrir componentes.',
     ],
-    herramientas: ['Llave dinamometrica', 'Recipiente para aceite', 'Kit de servicio 500 hrs'],
+    herramientas: ['Llave dinamométrica', 'Recipiente para aceite', 'Kit de servicio 500 hrs'],
     pasos: [
       { orden: 1, texto: 'Reemplazar el filtro de retorno.', foto: fotoDe('3115304000', 'desgastada') },
       { orden: 2, texto: 'Inspeccionar y reemplazar sellos y o-rings del kit.' },
@@ -484,16 +489,16 @@ const procedimientos: Procedimiento[] = [
     id: 'proc-cambio-acumulador',
     titulo: 'Recarga / cambio de acumulador',
     seguridad: [
-      'PELIGRO: el acumulador contiene gas a alta presion. Descargar el nitrogeno por la valvula antes de desmontar.',
-      'Usar solo nitrogeno seco; nunca oxigeno ni aire comprimido.',
-      'Proteccion ocular obligatoria.',
+      'PELIGRO: el acumulador contiene gas a alta presión. Descargar el nitrógeno por la válvula antes de desmontar.',
+      'Usar solo nitrógeno seco; nunca oxígeno ni aire comprimido.',
+      'Protección ocular obligatoria.',
     ],
-    herramientas: ['Kit de carga de nitrogeno', 'Manometro de alta', 'Llave de acumulador'],
+    herramientas: ['Kit de carga de nitrógeno', 'Manómetro de alta', 'Llave de acumulador'],
     pasos: [
-      { orden: 1, texto: 'Descargar por completo la presion de gas por la valvula de carga.', advertencia: 'No aflojar ningun perno con presion en el acumulador.' },
+      { orden: 1, texto: 'Descargar por completo la presión de gas por la válvula de carga.', advertencia: 'No aflojar ningún perno con presión en el acumulador.' },
       { orden: 2, texto: 'Desmontar el acumulador y reemplazar membrana y o-ring.', foto: fotoDe('3115301000', 'instalada') },
-      { orden: 3, texto: 'Montar y recargar con nitrogeno a la presion especificada.', torqueNm: 90 },
-      { orden: 4, texto: 'Verificar ausencia de fugas y registrar la presion final.' },
+      { orden: 3, texto: 'Montar y recargar con nitrógeno a la presión especificada.', torqueNm: 90 },
+      { orden: 4, texto: 'Verificar ausencia de fugas y registrar la presión final.' },
     ],
     duracionMin: 75,
   },
@@ -504,22 +509,22 @@ const fallas: Falla[] = [
   {
     id: 'f-perdida-presion',
     sistemaId: SIS.percusion,
-    sintoma: 'Pierde presion de impacto',
+    sintoma: 'Pierde presión de impacto',
     arbol: {
-      pregunta: 'El manometro de linea marca presion normal?',
+      pregunta: '¿El manómetro de línea marca presión normal?',
       opciones: [
         {
-          etiqueta: 'Si, presion normal',
+          etiqueta: 'Sí, presión normal',
           siguiente: {
-            pregunta: 'El piston golpea pero con fuerza reducida?',
+            pregunta: '¿El pistón golpea pero con fuerza reducida?',
             opciones: [
               {
-                etiqueta: 'Si, golpea debil',
+                etiqueta: 'Sí, golpea débil',
                 siguiente: {
                   resultado: {
                     piezaIds: ['p-sello-piston-alta', 'p-piston'],
                     procedimientoId: 'proc-cambio-sellos-piston',
-                    nota: 'El desgaste de los sellos de piston reduce el impacto.',
+                    nota: 'El desgaste de los sellos de pistón reduce el impacto.',
                   },
                 },
               },
@@ -529,7 +534,7 @@ const fallas: Falla[] = [
                   resultado: {
                     piezaIds: ['p-valvula-distribuidora'],
                     procedimientoId: 'proc-cambio-sellos-piston',
-                    nota: 'Revisar la valvula distribuidora: puede estar trabada.',
+                    nota: 'Revisar la válvula distribuidora: puede estar trabada.',
                   },
                 },
               },
@@ -537,12 +542,12 @@ const fallas: Falla[] = [
           },
         },
         {
-          etiqueta: 'No, presion baja',
+          etiqueta: 'No, presión baja',
           siguiente: {
             resultado: {
               piezaIds: ['p-valvula-alivio', 'p-acumulador'],
               procedimientoId: 'proc-cambio-acumulador',
-              nota: 'Perdida en el circuito hidraulico o acumulador descargado.',
+              nota: 'Pérdida en el circuito hidráulico o acumulador descargado.',
             },
           },
         },
@@ -552,22 +557,22 @@ const fallas: Falla[] = [
   {
     id: 'f-ruido-metalico',
     sistemaId: SIS.percusion,
-    sintoma: 'Ruido metalico anormal',
+    sintoma: 'Ruido metálico anormal',
     arbol: {
-      pregunta: 'El ruido aparece solo al golpear?',
+      pregunta: '¿El ruido aparece solo al golpear?',
       opciones: [
         {
-          etiqueta: 'Si, al golpear',
+          etiqueta: 'Sí, al golpear',
           siguiente: {
             resultado: {
               piezaIds: ['p-buje-piston', 'p-piston'],
               procedimientoId: 'proc-cambio-sellos-piston',
-              nota: 'Juego excesivo entre piston y buje guia.',
+              nota: 'Juego excesivo entre pistón y buje guía.',
             },
           },
         },
         {
-          etiqueta: 'No, tambien en vacio',
+          etiqueta: 'No, también en vacío',
           siguiente: {
             resultado: {
               piezaIds: ['p-perno-lateral'],
@@ -584,7 +589,7 @@ const fallas: Falla[] = [
     sistemaId: SIS.hidraulico,
     sintoma: 'Fuga de aceite en el cuerpo',
     arbol: {
-      pregunta: 'De donde proviene la fuga?',
+      pregunta: '¿De dónde proviene la fuga?',
       opciones: [
         {
           etiqueta: 'De las mangueras o acoples',
@@ -592,7 +597,7 @@ const fallas: Falla[] = [
             resultado: {
               piezaIds: ['p-manguera-alta', 'p-acople-hidraulico'],
               procedimientoId: 'proc-servicio-500',
-              nota: 'Revisar racores y reemplazar manguera si esta fisurada.',
+              nota: 'Revisar racores y reemplazar manguera si está fisurada.',
             },
           },
         },
@@ -602,7 +607,7 @@ const fallas: Falla[] = [
             resultado: {
               piezaIds: ['p-sello-piston-baja', 'p-guardapolvo'],
               procedimientoId: 'proc-cambio-sellos-piston',
-              nota: 'Sellos de baja presion o guardapolvo vencidos.',
+              nota: 'Sellos de baja presión o guardapolvo vencidos.',
             },
           },
         },
@@ -614,10 +619,10 @@ const fallas: Falla[] = [
     sistemaId: SIS.hidraulico,
     sintoma: 'Sobrecalentamiento del sistema',
     arbol: {
-      pregunta: 'El filtro de retorno esta al dia?',
+      pregunta: '¿El filtro de retorno está al día?',
       opciones: [
         {
-          etiqueta: 'No / no se',
+          etiqueta: 'No / no sé',
           siguiente: {
             resultado: {
               piezaIds: ['p-filtro-retorno'],
@@ -627,12 +632,12 @@ const fallas: Falla[] = [
           },
         },
         {
-          etiqueta: 'Si, recien cambiado',
+          etiqueta: 'Sí, recién cambiado',
           siguiente: {
             resultado: {
               piezaIds: ['p-valvula-alivio'],
               procedimientoId: 'proc-cambio-acumulador',
-              nota: 'Valvula de alivio mal ajustada o pegada.',
+              nota: 'Válvula de alivio mal ajustada o pegada.',
             },
           },
         },
@@ -656,7 +661,7 @@ const fallas: Falla[] = [
     sistemaId: SIS.retencion,
     sintoma: 'Juego excesivo en la herramienta',
     arbol: {
-      pregunta: 'El juego es lateral o axial?',
+      pregunta: '¿El juego es lateral o axial?',
       opciones: [
         {
           etiqueta: 'Lateral',
@@ -664,7 +669,7 @@ const fallas: Falla[] = [
             resultado: {
               piezaIds: ['p-buje-frontal', 'p-buje-inferior'],
               procedimientoId: 'proc-cambio-buje-frontal',
-              nota: 'Bujes de guia desgastados.',
+              nota: 'Bujes de guía desgastados.',
             },
           },
         },
@@ -674,7 +679,7 @@ const fallas: Falla[] = [
             resultado: {
               piezaIds: ['p-tope-herramienta', 'p-pasador-retencion'],
               procedimientoId: 'proc-cambio-buje-frontal',
-              nota: 'Tope o pasador de retencion gastados.',
+              nota: 'Tope o pasador de retención gastados.',
             },
           },
         },
@@ -733,7 +738,7 @@ const assets = generarFotos()
 
 const pack: Pack = {
   packId: 'hidromax-bx40',
-  version: 1,
+  version: 2,
   activo,
   sistemas,
   piezas,

@@ -42,7 +42,7 @@ export function PackManager({
         <h3 className="mb-2 text-xs uppercase tracking-wide text-neutral-500">Disponibles</h3>
         {!available ? (
           <p className="text-sm text-neutral-500">
-            {offline ? 'Conectate para ver y descargar packs.' : 'Cargando...'}
+            {offline ? 'Conéctate para ver y descargar packs.' : 'Cargando...'}
           </p>
         ) : available.length === 0 ? (
           <p className="text-sm text-neutral-500">No hay packs publicados.</p>

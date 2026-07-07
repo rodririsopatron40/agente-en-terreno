@@ -49,7 +49,7 @@ export function Catalogo({
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder={`Buscar ${t.pieza.toLowerCase()} o numero de parte`}
+        placeholder={`Buscar ${t.pieza.toLowerCase()} o número de parte`}
         className="min-h-12 w-full rounded-lg border border-neutral-700 bg-neutral-900 px-3 text-base text-neutral-100 placeholder:text-neutral-500"
         inputMode="search"
         autoCorrect="off"
@@ -57,7 +57,7 @@ export function Catalogo({
       />
       {superseso && (
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
-          <code className="text-amber-100">{superseso.antiguo}</code> es un numero antiguo.
+          <code className="text-amber-100">{superseso.antiguo}</code> es un número antiguo.
           Reemplazado por <code className="text-amber-100">{superseso.vigente.partNumber}</code>.
         </div>
       )}
@@ -103,7 +103,7 @@ function PiezaList({
               <span className="block truncate text-sm font-medium text-neutral-50">{p.nombre}</span>
               <code className="text-xs text-neutral-400">{p.partNumber}</code>
             </span>
-            <CriticidadBadge n={p.criticidad} sitio={t.sitio} />
+            <CriticidadBadge n={p.criticidad} label={t.criticidad[p.criticidad]} />
           </button>
         </li>
       ))}

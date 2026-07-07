@@ -77,8 +77,17 @@
         "nombre": { "type": "string", "minLength": 1 },
         "descripcionVisual": { "type": "string", "minLength": 1 },
         "specs": {
-          "type": "object",
-          "additionalProperties": { "type": ["string", "number"] }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["etiqueta", "valor"],
+            "properties": {
+              "etiqueta": { "type": "string", "minLength": 1 },
+              "valor": { "type": ["string", "number"] },
+              "unidad": { "type": "string" }
+            }
+          }
         },
         "criticidad": { "type": "integer", "enum": [1, 2, 3] },
         "vidaUtilHrs": { "type": "number", "minimum": 0 },

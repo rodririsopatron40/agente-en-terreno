@@ -16,6 +16,9 @@ export interface VerticalConfig {
     sistema: string;
     pieza: string;
     falla: string;
+    // Etiqueta visible por nivel de criticidad. El color lo pone el componente
+    // (es severidad visual); el texto es de dominio y por eso vive en el config.
+    criticidad: Record<Criticidad, string>; // { 1: 'Menor', 2: 'Importante', 3: 'Detiene faena' }
   };
   branding: {
     logoUrl: string;
@@ -60,6 +63,14 @@ export interface Sistema {
   descripcion?: string;
 }
 
+// Especificacion tecnica lista para mostrar: etiqueta legible + valor + unidad
+// opcional. El pack trae el texto ya formateado; la app no mapea llaves a labels.
+export interface Spec {
+  etiqueta: string; // 'Diametro exterior'
+  valor: string | number; // 150
+  unidad?: string; // 'mm'
+}
+
 export interface Pieza {
   id: string;
   sistemaId: string;
@@ -67,7 +78,7 @@ export interface Pieza {
   partNumberNorm: string; // solo [a-z0-9], para busqueda
   nombre: string;
   descripcionVisual: string; // insumo del RAG de la Fase 5
-  specs: Record<string, string | number>;
+  specs: Spec[];
   criticidad: Criticidad;
   vidaUtilHrs?: number;
   fotos: {

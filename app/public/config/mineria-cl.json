@@ -6,7 +6,12 @@
     "sitio": "Faena",
     "sistema": "Sistema",
     "pieza": "Pieza",
-    "falla": "Falla"
+    "falla": "Falla",
+    "criticidad": {
+      "1": "Menor",
+      "2": "Importante",
+      "3": "Detiene faena"
+    }
   },
   "branding": {
     "logoUrl": "/favicon.svg",

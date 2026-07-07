@@ -19,7 +19,7 @@ export async function listVerticales(): Promise<VerticalListItem[]> {
 export async function loadVerticalConfig(id: string): Promise<VerticalConfig> {
   const res = await fetch(`${BASE}config/${id}.json`);
   if (!res.ok) {
-    throw new Error(`No se pudo cargar la configuracion '${id}' (HTTP ${res.status})`);
+    throw new Error(`No se pudo cargar la configuración '${id}' (HTTP ${res.status})`);
   }
   const cfg = (await res.json()) as VerticalConfig;
   assertVerticalConfig(cfg);
@@ -35,6 +35,7 @@ export function applyBranding(cfg: VerticalConfig): void {
 
 function assertVerticalConfig(c: VerticalConfig): void {
   const t = c && c.terminologia;
+  const crit = t && t.criticidad;
   const ok =
     c &&
     c.verticalId &&
@@ -45,8 +46,12 @@ function assertVerticalConfig(c: VerticalConfig): void {
     t.sitio &&
     t.sistema &&
     t.pieza &&
-    t.falla;
+    t.falla &&
+    crit &&
+    crit[1] &&
+    crit[2] &&
+    crit[3];
   if (!ok) {
-    throw new Error('vertical.config.json invalido: faltan campos requeridos');
+    throw new Error('vertical.config.json inválido: faltan campos requeridos');
   }
 }

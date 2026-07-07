@@ -24,11 +24,13 @@ export function PiezaDetail({
   const aliases = pack.aliases.filter((a) => a.piezaId === pieza.id)
   const reemplaza = aliases.filter((a) => a.tipo === 'reemplazado_por')
   const otros = aliases.filter((a) => a.tipo !== 'reemplazado_por')
-  const specs = Object.entries(pieza.specs)
+  // Guarda: un pack viejo cacheado en el navegador puede traer specs con la forma
+  // anterior (objeto). Sin esto, un reload antes de re-importar romperia la ficha.
+  const specs = Array.isArray(pieza.specs) ? pieza.specs : []
 
   return (
     <section className="fixed inset-0 z-10 overflow-y-auto bg-neutral-950">
-      <div className="mx-auto max-w-md p-5">
+      <div className="mx-auto max-w-2xl p-5">
         <button
           onClick={onClose}
           className="-ml-1 mb-3 inline-flex min-h-12 items-center px-1 text-sm font-medium text-neutral-300 active:text-neutral-100"
@@ -40,7 +42,7 @@ export function PiezaDetail({
           <code className="rounded bg-neutral-800 px-2 py-1 text-sm text-neutral-50">
             {pieza.partNumber}
           </code>
-          <CriticidadBadge n={pieza.criticidad} sitio={t.sitio} />
+          <CriticidadBadge n={pieza.criticidad} label={t.criticidad[pieza.criticidad]} />
         </div>
 
         {reemplaza.length > 0 && (
@@ -52,12 +54,12 @@ export function PiezaDetail({
                 <code className="text-amber-100">{a.partNumber}</code>
               </span>
             ))}
-            . Usa este numero al pedir.
+            . Usa este número al pedir.
           </div>
         )}
 
         {fotos.length > 0 && (
-          <div className="-mx-5 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2">
+          <div className="no-scrollbar -mx-5 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2">
             {fotos.map((f) => (
               <figure key={f.src} className="w-[82%] flex-none snap-start">
                 <img
@@ -71,17 +73,20 @@ export function PiezaDetail({
           </div>
         )}
         {fotos.length > 1 && (
-          <p className="mt-1 text-center text-xs text-neutral-500">Desliza para ver mas fotos</p>
+          <p className="mt-1 text-center text-xs text-neutral-500">Desliza para ver más fotos</p>
         )}
 
         <p className="mt-4 text-sm text-neutral-300">{pieza.descripcionVisual}</p>
 
         {specs.length > 0 && (
           <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-1.5 text-sm">
-            {specs.map(([k, v]) => (
-              <div key={k} className="contents">
-                <dt className="text-neutral-400">{k}</dt>
-                <dd className="text-right font-medium text-neutral-100">{String(v)}</dd>
+            {specs.map((s) => (
+              <div key={s.etiqueta} className="contents">
+                <dt className="text-neutral-400">{s.etiqueta}</dt>
+                <dd className="text-right font-medium text-neutral-100">
+                  {s.valor}
+                  {s.unidad ? ` ${s.unidad}` : ''}
+                </dd>
               </div>
             ))}
           </dl>
@@ -89,13 +94,13 @@ export function PiezaDetail({
 
         {pieza.vidaUtilHrs != null && (
           <p className="mt-3 text-sm text-neutral-300">
-            Vida util estimada: <span className="font-medium text-neutral-100">{pieza.vidaUtilHrs} h</span>
+            Vida útil estimada: <span className="font-medium text-neutral-100">{pieza.vidaUtilHrs} h</span>
           </p>
         )}
 
         {otros.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Otros numeros</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Otros números</h3>
             <ul className="mt-1 space-y-1 text-sm">
               {otros.map((a) => (
                 <li key={a.partNumber} className="flex items-center justify-between gap-2">

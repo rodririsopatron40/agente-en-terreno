@@ -16,3 +16,11 @@ body {
   margin: 0;
   background: #0a0a0a;
 }
+
+/* Carrusel de fotos: ocultar la barra de scroll nativa sin perder el scroll-snap. */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chromium / Safari */
+}

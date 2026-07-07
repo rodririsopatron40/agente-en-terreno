@@ -11,13 +11,23 @@
     "terminologia": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["activo", "sitio", "sistema", "pieza", "falla"],
+      "required": ["activo", "sitio", "sistema", "pieza", "falla", "criticidad"],
       "properties": {
         "activo": { "type": "string", "minLength": 1 },
         "sitio": { "type": "string", "minLength": 1 },
         "sistema": { "type": "string", "minLength": 1 },
         "pieza": { "type": "string", "minLength": 1 },
-        "falla": { "type": "string", "minLength": 1 }
+        "falla": { "type": "string", "minLength": 1 },
+        "criticidad": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["1", "2", "3"],
+          "properties": {
+            "1": { "type": "string", "minLength": 1 },
+            "2": { "type": "string", "minLength": 1 },
+            "3": { "type": "string", "minLength": 1 }
+          }
+        }
       }
     },
     "branding": {

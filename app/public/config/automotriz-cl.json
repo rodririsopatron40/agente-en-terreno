@@ -2,11 +2,16 @@
   "verticalId": "automotriz-cl",
   "nombre": "Taller Automotriz Pro",
   "terminologia": {
-    "activo": "Vehiculo",
+    "activo": "Vehículo",
     "sitio": "Taller",
     "sistema": "Sistema",
     "pieza": "Repuesto",
-    "falla": "Sintoma"
+    "falla": "Síntoma",
+    "criticidad": {
+      "1": "Menor",
+      "2": "Importante",
+      "3": "Inmoviliza el vehículo"
+    }
   },
   "branding": {
     "logoUrl": "/favicon.svg",
