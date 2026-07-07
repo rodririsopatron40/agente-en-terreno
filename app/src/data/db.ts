@@ -19,15 +19,46 @@ export interface MetaKV {
   value: string
 }
 
+// Progreso de un procedimiento: que pasos (por 'orden') estan marcados. Persiste
+// para retomar si la app se cierra a mitad. id = `${packId}:${procId}`.
+export interface ProcProgreso {
+  id: string
+  packId: string
+  procId: string
+  marcados: number[]
+  updatedAt: number
+}
+
+// Intencion de pedido (stub de Fase 3; el flujo real es fase posterior).
+// clave = `${packId}:${tipo}:${refId}` -> re-agregar es idempotente.
+export interface PedidoIntent {
+  clave: string
+  packId: string
+  tipo: 'pieza' | 'kit'
+  refId: string
+  nombre: string
+  partNumber: string
+  addedAt: number
+}
+
 class TerrenoDB extends Dexie {
   packs!: Table<StoredPack, string>
   meta!: Table<MetaKV, string>
+  progreso!: Table<ProcProgreso, string>
+  pedido!: Table<PedidoIntent, string>
 
   constructor() {
     super('terreno')
     this.version(1).stores({
       packs: 'packId, version',
       meta: 'key',
+    })
+    // v2: checklist de procedimientos + intenciones de pedido (Fase 3).
+    this.version(2).stores({
+      packs: 'packId, version',
+      meta: 'key',
+      progreso: 'id, packId',
+      pedido: 'clave, packId',
     })
   }
 }

@@ -4,7 +4,9 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildIndex, searchPiezas } from '../app/src/data/search'
 import { planAssetDelta } from '../app/src/domain/packDelta'
-import type { Pack } from '../app/src/domain/types'
+import { toggleMarcado, progresoResumen } from '../app/src/domain/checklist'
+import { validarEstructuraArbol, hojasDeArbol } from '../app/src/domain/arbolDiagnostico'
+import type { NodoDiagnostico, Pack } from '../app/src/domain/types'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const pack = JSON.parse(
@@ -49,6 +51,49 @@ check('delta detecta 1 removido', d2.refetch.length === 0 && d2.remove.length ==
 // Mismo pack -> sin cambios
 const d3 = planAssetDelta(pack.assets, pack.assets)
 check('delta sin cambios cuando es identico', d3.refetch.length === 0 && d3.remove.length === 0)
+
+// --- Fase 3: checklist de procedimientos (logica pura persistible) ---
+check('toggle marca un paso', toggleMarcado([], 2).join(',') === '2')
+check('toggle desmarca si ya estaba', toggleMarcado([1, 2, 3], 2).join(',') === '1,3')
+check('toggle mantiene orden ascendente', toggleMarcado([3, 1], 2).join(',') === '1,2,3')
+{
+  // Simula cerrar y reabrir: el estado marcado se preserva entre "sesiones".
+  const sesion1 = toggleMarcado(toggleMarcado([], 1), 3) // marca pasos 1 y 3
+  const alReabrir = [...sesion1] // lo que Dexie devolveria
+  const r = progresoResumen(alReabrir, 5)
+  check('progreso sobrevive reapertura', alReabrir.join(',') === '1,3' && r.hechos === 2 && !r.completo)
+}
+check('progreso completo cuando estan todos', progresoResumen([1, 2, 3], 3).completo === true)
+check('progreso ignora ordenes fuera de rango', progresoResumen([1, 2, 9], 3).hechos === 2)
+
+// --- Fase 3/4: validacion de arboles de diagnostico ---
+// Los arboles reales del pack son estructuralmente validos.
+check(
+  'arboles del pack: estructura valida',
+  pack.fallas.every((f) => validarEstructuraArbol(f.arbol).length === 0),
+)
+check('hojasDeArbol recolecta todos los resultados', hojasDeArbol(pack.fallas[0].arbol).length >= 1)
+// Rama sin terminar en resultado -> error.
+const ramaColgante: NodoDiagnostico = {
+  pregunta: 'a?',
+  opciones: [{ etiqueta: 'x', siguiente: {} as NodoDiagnostico }],
+}
+check('detecta rama que no termina en resultado', validarEstructuraArbol(ramaColgante).length > 0)
+// Nodo que es rama y hoja a la vez -> error.
+const ambiguo: NodoDiagnostico = {
+  pregunta: 'a?',
+  opciones: [{ etiqueta: 'x', siguiente: { resultado: { piezaIds: ['p'], procedimientoId: 'q' } } }],
+  resultado: { piezaIds: ['p'], procedimientoId: 'q' },
+}
+check('detecta nodo ambiguo (rama y hoja)', validarEstructuraArbol(ambiguo).length > 0)
+// Profundidad > 8 -> error.
+let profundo: NodoDiagnostico = { resultado: { piezaIds: ['p'], procedimientoId: 'q' } }
+for (let i = 0; i < 9; i++) profundo = { pregunta: 'a?', opciones: [{ etiqueta: 'x', siguiente: profundo }] }
+check('detecta profundidad > 8', validarEstructuraArbol(profundo).some((e) => /profundidad/.test(e)))
+// Ciclo -> error (arbol construido programaticamente, no desde JSON).
+const ciclo: NodoDiagnostico = { pregunta: 'a?', opciones: [] }
+ciclo.opciones!.push({ etiqueta: 'x', siguiente: ciclo })
+check('detecta ciclo', validarEstructuraArbol(ciclo).some((e) => /ciclo/.test(e)))
 
 console.log(fallas ? `\n${fallas} FALLA(s)` : '\nTODO OK')
 process.exit(fallas ? 1 : 0)

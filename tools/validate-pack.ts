@@ -7,8 +7,9 @@ import { resolve, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Ajv2020 from 'ajv/dist/2020'
 import addFormats from 'ajv-formats'
-import type { Pack, NodoDiagnostico } from '../app/src/domain/types'
+import type { Pack } from '../app/src/domain/types'
 import { normalizePartNumber } from '../app/src/domain/partNumber'
+import { hojasDeArbol, validarEstructuraArbol } from '../app/src/domain/arbolDiagnostico'
 
 const here = dirname(fileURLToPath(import.meta.url))
 
@@ -95,26 +96,24 @@ for (const k of pack.kits) {
   }
 }
 
-function walkNodo(nodo: NodoDiagnostico, ruta: string, fallaId: string) {
-  const esHoja = !!nodo.resultado
-  const esRama = !!nodo.pregunta && !!nodo.opciones && nodo.opciones.length > 0
-  if (esHoja === esRama) {
-    errores.push(`falla '${fallaId}' nodo ${ruta}: debe ser rama (pregunta+opciones) u hoja (resultado), no ambas ni ninguna`)
-  }
-  if (nodo.resultado) {
-    if (!procIds.has(nodo.resultado.procedimientoId)) {
-      errores.push(`falla '${fallaId}' nodo ${ruta}: procedimientoId '${nodo.resultado.procedimientoId}' inexistente`)
-    }
-    for (const pid of nodo.resultado.piezaIds) {
-      if (!piezaIds.has(pid)) errores.push(`falla '${fallaId}' nodo ${ruta}: piezaId '${pid}' inexistente`)
-    }
-  }
-  nodo.opciones?.forEach((op, i) => walkNodo(op.siguiente, `${ruta}/${i}`, fallaId))
-}
-
 for (const f of pack.fallas) {
   if (!sistemaIds.has(f.sistemaId)) errores.push(`falla '${f.id}': sistemaId '${f.sistemaId}' inexistente`)
-  walkNodo(f.arbol, 'raiz', f.id)
+  // Estructura del arbol: rama-u-hoja, ramas terminadas en resultado, sin ciclos,
+  // profundidad <= 8 (logica pura compartida con el wizard de diagnostico).
+  const erroresEstructura = validarEstructuraArbol(f.arbol)
+  for (const e of erroresEstructura) errores.push(`falla '${f.id}' ${e}`)
+  // Integridad referencial de cada hoja. Solo si la estructura es valida:
+  // hojasDeArbol asume un arbol acotado (sin ciclos), garantizado por lo anterior.
+  if (erroresEstructura.length === 0) {
+    for (const r of hojasDeArbol(f.arbol)) {
+      if (!procIds.has(r.procedimientoId)) {
+        errores.push(`falla '${f.id}': procedimientoId '${r.procedimientoId}' inexistente`)
+      }
+      for (const pid of r.piezaIds) {
+        if (!piezaIds.has(pid)) errores.push(`falla '${f.id}': piezaId '${pid}' inexistente`)
+      }
+    }
+  }
 }
 
 for (const proc of pack.procedimientos) {

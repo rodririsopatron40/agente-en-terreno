@@ -39,4 +39,39 @@ Pack bumpeado a **v2** (el cambio de contrato invalida el pack v1 guardado; el u
 
 **Verificado:** gen-mock + validate (pack v2 + 2 configs) OK; typecheck:tools OK; `npm test` verde; build limpio; navegador: specs con etiqueta+unidad, white-label de criticidad, tildes, desktop 672px centrado, carrusel sin scrollbar, sin errores de consola.
 
-**Siguiente (Fase 3 — Procedimientos):** paso a paso con seguridad siempre visible, torques, herramientas, kit recomendado, fotos por paso. Datos ya en el pack (4 procedimientos).
+## Ticket carrusel — HECHO (2026-07-07)
+Al ocultar la scrollbar nativa (pulido previo) el carrusel quedó sin navegación en desktop. Nuevo componente `FotoCarrusel` (`app/src/features/catalogo/FotoCarrusel.tsx`): flechas ‹ › (size-12, `hidden md:flex` -> visibles en desktop, ocultas en móvil), puntos indicadores debajo (el actual resaltado), swipe táctil intacto (scroll-snap). Solo si hay >1 foto. Verificado: desktop 2 flechas funcionales (avanzan foto), móvil 0 visibles.
+
+## Fase 3 — Procedimientos — HECHO (2026-07-07)
+Nota del planificador: orden de fases invertido. Fase 3 = Procedimientos (esta), Fase 4 = Diagnóstico guiado (después).
+
+**Flujo:** la ficha de pieza dejó de ser hoja muerta: si la pieza tiene `procedimientoId`, botón "Ver procedimiento de reparación" abre `ProcedimientoView` (overlay z-20 sobre la ficha z-10). Fase `seguridad` (siempre primero, no saltable): duración estimada + herramientas + kit recomendado + bloque rojo de seguridad + gate "He leído la seguridad, comenzar". Fase `pasos`: checklist. La seguridad reaparece en cada apertura, aun al retomar (DoD).
+
+**Checklist persistente:** cada check se guarda en Dexie (tabla `progreso`, id `packId:procId`, `marcados: number[]`). Al cerrar y reabrir la app, los pasos marcados se retoman. Por paso: texto, foto opcional, torque destacado (badge sky), advertencia opcional (badge ámbar). Progreso "Paso X de N".
+
+**Pedido stub:** botón contextual "Agregar al pedido" (pieza, en la ficha) y "Agregar kit al pedido" (en el procedimiento) escriben la intención en Dexie (tabla `pedido`, clave `packId:tipo:refId`, idempotente). El flujo de envío real es fase posterior.
+
+**Datos:** Dexie a **v2** (tablas `progreso` + `pedido`; `packs`/`meta` intactas). Lógica pura del checklist en `domain/checklist.ts` (testeable sin Dexie), reexportada por `data/procedimientoRepo.ts`.
+
+**Validación de árboles (prep Fase 4):** `domain/arbolDiagnostico.ts` con `validarEstructuraArbol` (rama-u-hoja, toda rama termina en resultado, sin ciclos, profundidad <=8) y `hojasDeArbol`. `validate-pack` lo usa; los chequeos referenciales corren solo si la estructura es válida.
+
+**Verificado:** typecheck:tools OK; `npm test` 21 verdes (incluye toggle/persistencia de checklist y los 4 casos de árbol inválido: rama colgante, nodo ambiguo, profundidad>8, ciclo); validate OK; build limpio; headless 380px: ficha->procedimiento->seguridad-primero->checklist; marcar pasos 2 y 4, recargar (cerrar/reabrir), reabrir -> seguridad reaparece y checks persisten ("Paso 2 de 5", marcados [2,4]); stub de pedido escribe en Dexie; flechas de carrusel visibles/funcionales en desktop, ocultas en móvil. Sin errores de consola.
+
+## Plan de verificación Safari/iOS (ejecución manual del usuario)
+Objetivo: confirmar PWA instalable + offline real en iPhone. Requiere que el sitio esté servido por HTTPS (o el preview en la LAN); `localhost` no instala PWA en iOS.
+
+1. **Servir accesible al iPhone.** El SW solo existe en el build de producción. En el PC: `cd app && npm run build && npm run preview -- --host` y anotar la URL de red (ej. `http://192.168.x.x:5180`). El iPhone debe estar en la misma WiFi. (iOS pide HTTPS para SW salvo en algunos contextos LAN; si Safari no registra el SW por http, usar un túnel HTTPS tipo `cloudflared`/`ngrok` apuntando a :5180.)
+2. **Abrir en Safari iOS** (no Chrome iOS: usa el mismo WebKit pero el flujo de instalación es el de Safari). Cargar la URL, esperar a que liste el pack disponible.
+3. **Instalar la PWA:** botón Compartir -> "Agregar a inicio". Abrir la app desde el ícono (modo standalone, sin barra de Safari).
+4. **Descargar el pack** dentro de la PWA (pestaña Packs -> Descargar). Confirmar barra de progreso y que quede "Instalado".
+5. **Modo avión ON** (corta WiFi y datos). El badge debe pasar a "Offline".
+6. **Navegación offline a probar:**
+   - Catálogo: buscar "3115-2871-00" y "sello piston" -> abre ficha con foto (desde Cache Storage).
+   - Ficha -> "Ver procedimiento" -> pantalla de seguridad -> pasos.
+   - Marcar 2-3 pasos. **Cerrar la app por completo** (swipe up en el multitarea) y reabrir -> el procedimiento retoma los pasos marcados.
+   - Agregar una pieza y un kit al pedido (stub) -> sin errores.
+7. **Reportar:** si algún asset no carga offline (placeholder roto), si el SW no quedó registrado (todo falla sin red), o si el checklist no persiste tras cerrar. Datos útiles: versión de iOS, si se usó túnel HTTPS o LAN directa.
+
+Puntos de riesgo conocidos en iOS: (a) cuota de almacenamiento de Safari puede evictar IndexedDB/Cache si el equipo está bajo presión de espacio; (b) el SW requiere HTTPS; (c) `navigator.onLine` en iOS a veces tarda en reflejar el modo avión.
+
+**Siguiente (Fase 4 — Diagnóstico guiado):** alcance aprobado con dos cambios: el resultado linkea al procedimiento (ya funcional), y el estado del wizard NO se persiste (memoria; reiniciar al cerrar es correcto). La validación de árboles ya está lista.

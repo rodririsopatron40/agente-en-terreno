@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import type { Pack, Pieza, VerticalConfig } from '../../domain/types'
 import { assetUrl } from '../../data/packRepo'
+import { agregarAPedido } from '../../data/procedimientoRepo'
 import { CriticidadBadge } from '../../ui/CriticidadBadge'
+import { FotoCarrusel } from './FotoCarrusel'
+import { ProcedimientoView } from '../procedimientos/ProcedimientoView'
 
 export function PiezaDetail({
   pieza,
@@ -15,11 +19,19 @@ export function PiezaDetail({
   t: VerticalConfig['terminologia']
   onClose: () => void
 }) {
-  const fotos: { src: string; label: string }[] = [
+  const [verProc, setVerProc] = useState(false)
+  const [pedidoOk, setPedidoOk] = useState(false)
+
+  const rawFotos: { src: string; label: string }[] = [
     ...pieza.fotos.aislada.map((src) => ({ src, label: 'Pieza' })),
     ...(pieza.fotos.instalada ? [{ src: pieza.fotos.instalada, label: 'Instalada' }] : []),
     ...(pieza.fotos.desgastada ? [{ src: pieza.fotos.desgastada, label: 'Desgastada' }] : []),
   ]
+  const fotos = rawFotos.map((f) => ({
+    src: assetUrl(path, f.src),
+    alt: `${pieza.nombre} - ${f.label}`,
+    label: f.label,
+  }))
   const kits = pack.kits.filter((k) => pieza.kitIds.includes(k.id))
   const aliases = pack.aliases.filter((a) => a.piezaId === pieza.id)
   const reemplaza = aliases.filter((a) => a.tipo === 'reemplazado_por')
@@ -27,6 +39,20 @@ export function PiezaDetail({
   // Guarda: un pack viejo cacheado en el navegador puede traer specs con la forma
   // anterior (objeto). Sin esto, un reload antes de re-importar romperia la ficha.
   const specs = Array.isArray(pieza.specs) ? pieza.specs : []
+  const proc = pieza.procedimientoId
+    ? pack.procedimientos.find((p) => p.id === pieza.procedimientoId)
+    : undefined
+
+  async function agregar() {
+    await agregarAPedido({
+      packId: pack.packId,
+      tipo: 'pieza',
+      refId: pieza.id,
+      nombre: pieza.nombre,
+      partNumber: pieza.partNumber,
+    })
+    setPedidoOk(true)
+  }
 
   return (
     <section className="fixed inset-0 z-10 overflow-y-auto bg-neutral-950">
@@ -58,22 +84,28 @@ export function PiezaDetail({
           </div>
         )}
 
+        <div className="mt-4 flex flex-col gap-2">
+          {proc && (
+            <button
+              onClick={() => setVerProc(true)}
+              className="min-h-12 w-full rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white active:bg-emerald-700"
+            >
+              Ver procedimiento de reparación
+            </button>
+          )}
+          <button
+            onClick={agregar}
+            disabled={pedidoOk}
+            className="min-h-12 w-full rounded-lg border border-neutral-600 px-4 text-sm font-medium text-neutral-100 disabled:opacity-60"
+          >
+            {pedidoOk ? 'Agregada al pedido' : 'Agregar al pedido'}
+          </button>
+        </div>
+
         {fotos.length > 0 && (
-          <div className="no-scrollbar -mx-5 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2">
-            {fotos.map((f) => (
-              <figure key={f.src} className="w-[82%] flex-none snap-start">
-                <img
-                  src={assetUrl(path, f.src)}
-                  alt={`${pieza.nombre} - ${f.label}`}
-                  className="h-52 w-full rounded-lg border border-neutral-700 bg-neutral-900 object-contain"
-                />
-                <figcaption className="mt-1 text-center text-xs text-neutral-400">{f.label}</figcaption>
-              </figure>
-            ))}
+          <div className="mt-4">
+            <FotoCarrusel fotos={fotos} />
           </div>
-        )}
-        {fotos.length > 1 && (
-          <p className="mt-1 text-center text-xs text-neutral-500">Desliza para ver más fotos</p>
         )}
 
         <p className="mt-4 text-sm text-neutral-300">{pieza.descripcionVisual}</p>
@@ -114,7 +146,9 @@ export function PiezaDetail({
 
         {kits.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-xs uppercase tracking-wide text-neutral-500">Kits que la incluyen</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
+              Kits que la incluyen
+            </h3>
             <ul className="mt-1 space-y-1 text-sm">
               {kits.map((k) => (
                 <li key={k.id} className="flex items-center justify-between gap-2">
@@ -126,6 +160,10 @@ export function PiezaDetail({
           </div>
         )}
       </div>
+
+      {verProc && proc && (
+        <ProcedimientoView proc={proc} pack={pack} path={path} onClose={() => setVerProc(false)} />
+      )}
     </section>
   )
 }
