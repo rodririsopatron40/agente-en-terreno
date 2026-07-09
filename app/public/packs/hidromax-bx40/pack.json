@@ -1,0 +1,1233 @@
+{
+  "packId": "hidromax-bx40",
+  "version": 2,
+  "activo": {
+    "id": "act-bx40",
+    "nombre": "HidroMax BX-40",
+    "modelo": "BX-40",
+    "categoria": "Martillo hidráulico",
+    "descripcion": "Martillo hidráulico de rango medio para excavadora 18-26 t. Energía de impacto 4000 J, frecuencia 400-900 golpes/min. Modelo ficticio de demostración.",
+    "foto": "assets/activo-bx40.png"
+  },
+  "sistemas": [
+    {
+      "id": "sys-percusion",
+      "activoId": "act-bx40",
+      "nombre": "Percusión",
+      "orden": 1,
+      "descripcion": "Pistón, válvula distribuidora y componentes que generan el golpe."
+    },
+    {
+      "id": "sys-hidraulico",
+      "activoId": "act-bx40",
+      "nombre": "Hidráulico",
+      "orden": 2,
+      "descripcion": "Acumulador, mangueras, filtros y válvulas de presión."
+    },
+    {
+      "id": "sys-retencion",
+      "activoId": "act-bx40",
+      "nombre": "Retención de herramienta",
+      "orden": 3,
+      "descripcion": "Bujes, pasadores y topes que sostienen y guían la herramienta."
+    }
+  ],
+  "piezas": [
+    {
+      "id": "p-piston",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2010-00",
+      "partNumberNorm": "3115201000",
+      "nombre": "Pistón de impacto",
+      "descripcionVisual": "Cilindro de acero pulido de ~600 mm, superficie espejo con dos bandas de sello mecanizadas cerca del extremo de golpeo; el otro extremo es plano y mate.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero forjado"
+        },
+        {
+          "etiqueta": "Largo",
+          "valor": 600,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 95,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Peso",
+          "valor": 28,
+          "unidad": "kg"
+        }
+      ],
+      "criticidad": 3,
+      "vidaUtilHrs": 3000,
+      "fotos": {
+        "aislada": [
+          "assets/3115201000-aislada.png"
+        ],
+        "instalada": "assets/3115201000-instalada.png",
+        "desgastada": "assets/3115201000-desgastada.png"
+      },
+      "procedimientoId": "proc-cambio-sellos-piston",
+      "kitIds": [
+        "kit-servicio-500"
+      ]
+    },
+    {
+      "id": "p-sello-piston-alta",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2871-00",
+      "partNumberNorm": "3115287100",
+      "nombre": "Sello de pistón alta presión",
+      "descripcionVisual": "Anillo de poliuretano ámbar de ~95 mm de diámetro, sección en U, labio interno biselado. Se instala en la ranura superior del pistón.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Poliuretano"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 95,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Dureza",
+          "valor": "92 Shore A"
+        }
+      ],
+      "criticidad": 3,
+      "fotos": {
+        "aislada": [
+          "assets/3115287100-aislada.png"
+        ],
+        "desgastada": "assets/3115287100-desgastada.png"
+      },
+      "kitIds": [
+        "kit-servicio-500",
+        "kit-sellos-hidraulico"
+      ]
+    },
+    {
+      "id": "p-sello-piston-baja",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2872-00",
+      "partNumberNorm": "3115287200",
+      "nombre": "Sello de pistón baja presión",
+      "descripcionVisual": "Anillo de nitrilo negro de ~95 mm, sección cuadrada con resorte energizante metálico visible en la cara interior.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Nitrilo (NBR)"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 95,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Dureza",
+          "valor": "80 Shore A"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115287200-aislada.png"
+        ]
+      },
+      "kitIds": [
+        "kit-sellos-hidraulico"
+      ]
+    },
+    {
+      "id": "p-buje-piston",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2015-00",
+      "partNumberNorm": "3115201500",
+      "nombre": "Buje guía de pistón",
+      "descripcionVisual": "Manguito de bronce dorado de ~100 mm con ranuras de lubricación helicoidales en la cara interna.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Bronce SAE 660"
+        },
+        {
+          "etiqueta": "Diámetro exterior",
+          "valor": 110,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Diámetro interior",
+          "valor": 95,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 2,
+      "vidaUtilHrs": 4000,
+      "fotos": {
+        "aislada": [
+          "assets/3115201500-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-valvula-distribuidora",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2050-00",
+      "partNumberNorm": "3115205000",
+      "nombre": "Válvula distribuidora",
+      "descripcionVisual": "Carrete de acero cilíndrico de ~120 mm con varias gargantas anulares mecanizadas; superficie muy pulida, sin roscas.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero nitrurado"
+        },
+        {
+          "etiqueta": "Largo",
+          "valor": 120,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 55,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 3,
+      "fotos": {
+        "aislada": [
+          "assets/3115205000-aislada.png"
+        ],
+        "instalada": "assets/3115205000-instalada.png"
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-resorte-valvula",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2051-00",
+      "partNumberNorm": "3115205100",
+      "nombre": "Resorte de válvula",
+      "descripcionVisual": "Resorte helicoidal de compresión, alambre de ~4 mm, acabado fosfatado gris oscuro, ~60 mm de largo.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero de resorte"
+        },
+        {
+          "etiqueta": "Largo",
+          "valor": 60,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Hilos",
+          "valor": 8
+        }
+      ],
+      "criticidad": 1,
+      "fotos": {
+        "aislada": [
+          "assets/3115205100-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-tapa-trasera",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2001-00",
+      "partNumberNorm": "3115200100",
+      "nombre": "Tapa trasera",
+      "descripcionVisual": "Bloque de acero rectangular con cuatro perforaciones pasantes en las esquinas y dos puertos hidráulicos roscados en la cara frontal.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero"
+        },
+        {
+          "etiqueta": "Peso",
+          "valor": 22,
+          "unidad": "kg"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115200100-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-perno-lateral",
+      "sistemaId": "sys-percusion",
+      "partNumber": "3115-2005-00",
+      "partNumberNorm": "3115200500",
+      "nombre": "Perno lateral tensor",
+      "descripcionVisual": "Barra roscada larga de ~700 mm, acero negro, con tuerca hexagonal grande en un extremo.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero grado 12.9"
+        },
+        {
+          "etiqueta": "Largo",
+          "valor": 700,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Rosca",
+          "valor": "M30"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115200500-aislada.png"
+        ]
+      },
+      "procedimientoId": "proc-servicio-500",
+      "kitIds": [
+        "kit-servicio-500"
+      ]
+    },
+    {
+      "id": "p-acumulador",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3010-00",
+      "partNumberNorm": "3115301000",
+      "nombre": "Acumulador de alta presión",
+      "descripcionVisual": "Cuerpo cilíndrico de acero con tapa abombada y válvula de carga de gas en el tope; etiqueta de presión de nitrógeno visible.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero"
+        },
+        {
+          "etiqueta": "Presión de gas",
+          "valor": 60,
+          "unidad": "bar"
+        },
+        {
+          "etiqueta": "Capacidad",
+          "valor": 500,
+          "unidad": "cc"
+        }
+      ],
+      "criticidad": 3,
+      "fotos": {
+        "aislada": [
+          "assets/3115301000-aislada.png"
+        ],
+        "instalada": "assets/3115301000-instalada.png"
+      },
+      "procedimientoId": "proc-cambio-acumulador",
+      "kitIds": []
+    },
+    {
+      "id": "p-membrana-acumulador",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3011-00",
+      "partNumberNorm": "3115301100",
+      "nombre": "Membrana de acumulador",
+      "descripcionVisual": "Diafragma de elastómero negro con forma de campana, flexible, con reborde de montaje grueso en el borde.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Elastómero HNBR"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 120,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 3,
+      "fotos": {
+        "aislada": [
+          "assets/3115301100-aislada.png"
+        ]
+      },
+      "kitIds": [
+        "kit-sellos-hidraulico"
+      ]
+    },
+    {
+      "id": "p-oring-acumulador",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3012-00",
+      "partNumberNorm": "3115301200",
+      "nombre": "O-ring de acumulador",
+      "descripcionVisual": "Junta tórica negra de ~120 mm de diámetro y ~5 mm de sección, superficie lisa.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Vitón (FKM)"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 120,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Sección",
+          "valor": 5,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 1,
+      "fotos": {
+        "aislada": [
+          "assets/3115301200-aislada.png"
+        ]
+      },
+      "kitIds": [
+        "kit-servicio-500",
+        "kit-sellos-hidraulico"
+      ]
+    },
+    {
+      "id": "p-manguera-alta",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3020-00",
+      "partNumberNorm": "3115302000",
+      "nombre": "Manguera de alta presión",
+      "descripcionVisual": "Manguera hidráulica negra con trenzado de acero visible en los extremos y racores prensados a 90 grados.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Caucho + malla acero"
+        },
+        {
+          "etiqueta": "Largo",
+          "valor": 850,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Presión máxima",
+          "valor": 350,
+          "unidad": "bar"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115302000-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-acople-hidraulico",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3021-00",
+      "partNumberNorm": "3115302100",
+      "nombre": "Acople hidráulico rápido",
+      "descripcionVisual": "Conector metálico cromado tipo push-pull con collar moleteado deslizante y guardapolvo de goma.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero cromado"
+        },
+        {
+          "etiqueta": "Rosca",
+          "valor": "M22"
+        },
+        {
+          "etiqueta": "Presión máxima",
+          "valor": 350,
+          "unidad": "bar"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115302100-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-valvula-alivio",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3030-00",
+      "partNumberNorm": "3115303000",
+      "nombre": "Válvula de alivio de presión",
+      "descripcionVisual": "Cartucho hexagonal de latón con tornillo de ajuste sellado con laca roja y o-rings de colores en el cuerpo.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Latón"
+        },
+        {
+          "etiqueta": "Ajuste",
+          "valor": 180,
+          "unidad": "bar"
+        }
+      ],
+      "criticidad": 3,
+      "fotos": {
+        "aislada": [
+          "assets/3115303000-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-filtro-retorno",
+      "sistemaId": "sys-hidraulico",
+      "partNumber": "3115-3040-00",
+      "partNumberNorm": "3115304000",
+      "nombre": "Filtro de retorno",
+      "descripcionVisual": "Cartucho cilíndrico con malla plisada blanca/beige y tapas metálicas en ambos extremos.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Celulosa/sintético"
+        },
+        {
+          "etiqueta": "Filtración",
+          "valor": 10,
+          "unidad": "µm"
+        }
+      ],
+      "criticidad": 1,
+      "vidaUtilHrs": 500,
+      "fotos": {
+        "aislada": [
+          "assets/3115304000-aislada.png"
+        ],
+        "desgastada": "assets/3115304000-desgastada.png"
+      },
+      "procedimientoId": "proc-servicio-500",
+      "kitIds": [
+        "kit-servicio-500"
+      ]
+    },
+    {
+      "id": "p-buje-frontal",
+      "sistemaId": "sys-retencion",
+      "partNumber": "3115-4010-00",
+      "partNumberNorm": "3115401000",
+      "nombre": "Buje frontal",
+      "descripcionVisual": "Casquillo de acero endurecido de gran diámetro (~150 mm) con desgaste típico en la cara interna; exterior mecanizado con chaflán.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero endurecido"
+        },
+        {
+          "etiqueta": "Diámetro exterior",
+          "valor": 150,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Diámetro interior",
+          "valor": 100,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 3,
+      "vidaUtilHrs": 2000,
+      "fotos": {
+        "aislada": [
+          "assets/3115401000-aislada.png"
+        ],
+        "instalada": "assets/3115401000-instalada.png",
+        "desgastada": "assets/3115401000-desgastada.png"
+      },
+      "procedimientoId": "proc-cambio-buje-frontal",
+      "kitIds": []
+    },
+    {
+      "id": "p-pasador-retencion",
+      "sistemaId": "sys-retencion",
+      "partNumber": "3115-4011-00",
+      "partNumberNorm": "3115401100",
+      "nombre": "Pasador de retención",
+      "descripcionVisual": "Barra cilíndrica de acero de ~180 mm con una cara plana rebajada a lo largo y un extremo achaflanado.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero"
+        },
+        {
+          "etiqueta": "Largo",
+          "valor": 180,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 40,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115401100-aislada.png"
+        ]
+      },
+      "kitIds": [
+        "kit-servicio-500"
+      ]
+    },
+    {
+      "id": "p-tope-herramienta",
+      "sistemaId": "sys-retencion",
+      "partNumber": "3115-4012-00",
+      "partNumberNorm": "3115401200",
+      "nombre": "Tope de herramienta",
+      "descripcionVisual": "Bloque de acero en forma de C que abraza la herramienta; caras de contacto con marcas de impacto.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Acero"
+        },
+        {
+          "etiqueta": "Peso",
+          "valor": 6,
+          "unidad": "kg"
+        }
+      ],
+      "criticidad": 2,
+      "fotos": {
+        "aislada": [
+          "assets/3115401200-aislada.png"
+        ]
+      },
+      "kitIds": []
+    },
+    {
+      "id": "p-guardapolvo",
+      "sistemaId": "sys-retencion",
+      "partNumber": "3115-4013-00",
+      "partNumberNorm": "3115401300",
+      "nombre": "Guardapolvo frontal",
+      "descripcionVisual": "Anillo de goma flexible negro con labios concéntricos hacia adentro, sección delgada, ~110 mm.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Poliuretano"
+        },
+        {
+          "etiqueta": "Diámetro",
+          "valor": 110,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 1,
+      "fotos": {
+        "aislada": [
+          "assets/3115401300-aislada.png"
+        ]
+      },
+      "kitIds": [
+        "kit-sellos-hidraulico"
+      ]
+    },
+    {
+      "id": "p-buje-inferior",
+      "sistemaId": "sys-retencion",
+      "partNumber": "3115-4014-00",
+      "partNumberNorm": "3115401400",
+      "nombre": "Buje inferior",
+      "descripcionVisual": "Casquillo de bronce más corto que el frontal, superficie interna con ranuras axiales de lubricación.",
+      "specs": [
+        {
+          "etiqueta": "Material",
+          "valor": "Bronce"
+        },
+        {
+          "etiqueta": "Diámetro exterior",
+          "valor": 140,
+          "unidad": "mm"
+        },
+        {
+          "etiqueta": "Diámetro interior",
+          "valor": 100,
+          "unidad": "mm"
+        }
+      ],
+      "criticidad": 2,
+      "vidaUtilHrs": 2500,
+      "fotos": {
+        "aislada": [
+          "assets/3115401400-aislada.png"
+        ]
+      },
+      "kitIds": []
+    }
+  ],
+  "aliases": [
+    {
+      "piezaId": "p-buje-frontal",
+      "partNumber": "3115-4009-00",
+      "tipo": "reemplazado_por",
+      "nota": "Número antiguo, reemplazado por 3115-4010-00",
+      "partNumberNorm": "3115400900"
+    },
+    {
+      "piezaId": "p-filtro-retorno",
+      "partNumber": "HF-3040",
+      "tipo": "compatible",
+      "nota": "Equivalente aftermarket",
+      "partNumberNorm": "hf3040"
+    },
+    {
+      "piezaId": "p-oring-acumulador",
+      "partNumber": "OR-3012",
+      "tipo": "oem",
+      "partNumberNorm": "or3012"
+    },
+    {
+      "piezaId": "p-sello-piston-alta",
+      "partNumber": "SPA-2871",
+      "tipo": "compatible",
+      "nota": "Referencia de proveedor alternativo",
+      "partNumberNorm": "spa2871"
+    }
+  ],
+  "fallas": [
+    {
+      "id": "f-perdida-presion",
+      "sistemaId": "sys-percusion",
+      "sintoma": "Pierde presión de impacto",
+      "arbol": {
+        "pregunta": "¿El manómetro de línea marca presión normal?",
+        "opciones": [
+          {
+            "etiqueta": "Sí, presión normal",
+            "siguiente": {
+              "pregunta": "¿El pistón golpea pero con fuerza reducida?",
+              "opciones": [
+                {
+                  "etiqueta": "Sí, golpea débil",
+                  "siguiente": {
+                    "resultado": {
+                      "piezaIds": [
+                        "p-sello-piston-alta",
+                        "p-piston"
+                      ],
+                      "procedimientoId": "proc-cambio-sellos-piston",
+                      "nota": "El desgaste de los sellos de pistón reduce el impacto."
+                    }
+                  }
+                },
+                {
+                  "etiqueta": "No golpea",
+                  "siguiente": {
+                    "resultado": {
+                      "piezaIds": [
+                        "p-valvula-distribuidora"
+                      ],
+                      "procedimientoId": "proc-cambio-sellos-piston",
+                      "nota": "Revisar la válvula distribuidora: puede estar trabada."
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "etiqueta": "No, presión baja",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-valvula-alivio",
+                  "p-acumulador"
+                ],
+                "procedimientoId": "proc-cambio-acumulador",
+                "nota": "Pérdida en el circuito hidráulico o acumulador descargado."
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "f-ruido-metalico",
+      "sistemaId": "sys-percusion",
+      "sintoma": "Ruido metálico anormal",
+      "arbol": {
+        "pregunta": "¿El ruido aparece solo al golpear?",
+        "opciones": [
+          {
+            "etiqueta": "Sí, al golpear",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-buje-piston",
+                  "p-piston"
+                ],
+                "procedimientoId": "proc-cambio-sellos-piston",
+                "nota": "Juego excesivo entre pistón y buje guía."
+              }
+            }
+          },
+          {
+            "etiqueta": "No, también en vacío",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-perno-lateral"
+                ],
+                "procedimientoId": "proc-servicio-500",
+                "nota": "Revisar torque de pernos laterales."
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "f-fuga-aceite",
+      "sistemaId": "sys-hidraulico",
+      "sintoma": "Fuga de aceite en el cuerpo",
+      "arbol": {
+        "pregunta": "¿De dónde proviene la fuga?",
+        "opciones": [
+          {
+            "etiqueta": "De las mangueras o acoples",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-manguera-alta",
+                  "p-acople-hidraulico"
+                ],
+                "procedimientoId": "proc-servicio-500",
+                "nota": "Revisar racores y reemplazar manguera si está fisurada."
+              }
+            }
+          },
+          {
+            "etiqueta": "Del frente (herramienta)",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-sello-piston-baja",
+                  "p-guardapolvo"
+                ],
+                "procedimientoId": "proc-cambio-sellos-piston",
+                "nota": "Sellos de baja presión o guardapolvo vencidos."
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "f-sobrecalentamiento",
+      "sistemaId": "sys-hidraulico",
+      "sintoma": "Sobrecalentamiento del sistema",
+      "arbol": {
+        "pregunta": "¿El filtro de retorno está al día?",
+        "opciones": [
+          {
+            "etiqueta": "No / no sé",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-filtro-retorno"
+                ],
+                "procedimientoId": "proc-servicio-500",
+                "nota": "Filtro saturado restringe el retorno y calienta el aceite."
+              }
+            }
+          },
+          {
+            "etiqueta": "Sí, recién cambiado",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-valvula-alivio"
+                ],
+                "procedimientoId": "proc-cambio-acumulador",
+                "nota": "Válvula de alivio mal ajustada o pegada."
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "f-herramienta-trabada",
+      "sistemaId": "sys-retencion",
+      "sintoma": "La herramienta se traba",
+      "arbol": {
+        "resultado": {
+          "piezaIds": [
+            "p-buje-frontal",
+            "p-pasador-retencion"
+          ],
+          "procedimientoId": "proc-cambio-buje-frontal",
+          "nota": "Buje frontal ovalado o pasador deformado impiden el deslizamiento."
+        }
+      }
+    },
+    {
+      "id": "f-juego-excesivo",
+      "sistemaId": "sys-retencion",
+      "sintoma": "Juego excesivo en la herramienta",
+      "arbol": {
+        "pregunta": "¿El juego es lateral o axial?",
+        "opciones": [
+          {
+            "etiqueta": "Lateral",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-buje-frontal",
+                  "p-buje-inferior"
+                ],
+                "procedimientoId": "proc-cambio-buje-frontal",
+                "nota": "Bujes de guía desgastados."
+              }
+            }
+          },
+          {
+            "etiqueta": "Axial (entra y sale)",
+            "siguiente": {
+              "resultado": {
+                "piezaIds": [
+                  "p-tope-herramienta",
+                  "p-pasador-retencion"
+                ],
+                "procedimientoId": "proc-cambio-buje-frontal",
+                "nota": "Tope o pasador de retención gastados."
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "procedimientos": [
+    {
+      "id": "proc-cambio-sellos-piston",
+      "titulo": "Cambio de sellos de pistón",
+      "seguridad": [
+        "Despresurizar el circuito hidráulico y bloquear el equipo (LOTO) antes de abrir.",
+        "El acumulador puede conservar presión residual de gas: descargarlo primero.",
+        "Piezas pesadas: usar apoyo mecánico para el pistón (28 kg)."
+      ],
+      "herramientas": [
+        "Llave dinamométrica",
+        "Extractor de sellos",
+        "Juego de llaves Allen",
+        "Grasa de montaje"
+      ],
+      "pasos": [
+        {
+          "orden": 1,
+          "texto": "Despresurizar el circuito y desconectar las mangueras.",
+          "advertencia": "El aceite a presión puede penetrar la piel."
+        },
+        {
+          "orden": 2,
+          "texto": "Aflojar y retirar los pernos laterales en secuencia cruzada."
+        },
+        {
+          "orden": 3,
+          "texto": "Extraer el pistón y retirar los sellos gastados.",
+          "foto": "assets/3115201000-desgastada.png"
+        },
+        {
+          "orden": 4,
+          "texto": "Limpiar las ranuras e instalar los sellos nuevos del kit con grasa de montaje.",
+          "foto": "assets/3115287100-aislada.png"
+        },
+        {
+          "orden": 5,
+          "texto": "Montar el pistón y apretar los pernos laterales al torque indicado.",
+          "torqueNm": 320,
+          "advertencia": "Apretar en secuencia cruzada, en dos etapas."
+        }
+      ],
+      "duracionMin": 90,
+      "kitRecomendadoId": "kit-sellos-hidraulico"
+    },
+    {
+      "id": "proc-cambio-buje-frontal",
+      "titulo": "Cambio de buje frontal",
+      "seguridad": [
+        "Bloquear el equipo (LOTO) y retirar la herramienta antes de comenzar.",
+        "Bordes con rebabas: usar guantes de protección."
+      ],
+      "herramientas": [
+        "Prensa hidráulica o extractor de bujes",
+        "Mazo de goma",
+        "Calibrador"
+      ],
+      "pasos": [
+        {
+          "orden": 1,
+          "texto": "Retirar el pasador de retención y la herramienta."
+        },
+        {
+          "orden": 2,
+          "texto": "Extraer el buje frontal gastado con el extractor.",
+          "foto": "assets/3115401000-desgastada.png"
+        },
+        {
+          "orden": 3,
+          "texto": "Medir el alojamiento y verificar tolerancia antes de montar."
+        },
+        {
+          "orden": 4,
+          "texto": "Instalar el buje nuevo a presión, alineado con la marca.",
+          "foto": "assets/3115401000-instalada.png"
+        }
+      ],
+      "duracionMin": 60
+    },
+    {
+      "id": "proc-servicio-500",
+      "titulo": "Servicio programado 500 hrs",
+      "seguridad": [
+        "Bloquear el equipo (LOTO) antes de intervenir.",
+        "Descargar presión de gas y aceite antes de abrir componentes."
+      ],
+      "herramientas": [
+        "Llave dinamométrica",
+        "Recipiente para aceite",
+        "Kit de servicio 500 hrs"
+      ],
+      "pasos": [
+        {
+          "orden": 1,
+          "texto": "Reemplazar el filtro de retorno.",
+          "foto": "assets/3115304000-desgastada.png"
+        },
+        {
+          "orden": 2,
+          "texto": "Inspeccionar y reemplazar sellos y o-rings del kit."
+        },
+        {
+          "orden": 3,
+          "texto": "Verificar el torque de los pernos laterales.",
+          "torqueNm": 320
+        },
+        {
+          "orden": 4,
+          "texto": "Registrar horas y dejar constancia del servicio."
+        }
+      ],
+      "duracionMin": 120,
+      "kitRecomendadoId": "kit-servicio-500"
+    },
+    {
+      "id": "proc-cambio-acumulador",
+      "titulo": "Recarga / cambio de acumulador",
+      "seguridad": [
+        "PELIGRO: el acumulador contiene gas a alta presión. Descargar el nitrógeno por la válvula antes de desmontar.",
+        "Usar solo nitrógeno seco; nunca oxígeno ni aire comprimido.",
+        "Protección ocular obligatoria."
+      ],
+      "herramientas": [
+        "Kit de carga de nitrógeno",
+        "Manómetro de alta",
+        "Llave de acumulador"
+      ],
+      "pasos": [
+        {
+          "orden": 1,
+          "texto": "Descargar por completo la presión de gas por la válvula de carga.",
+          "advertencia": "No aflojar ningún perno con presión en el acumulador."
+        },
+        {
+          "orden": 2,
+          "texto": "Desmontar el acumulador y reemplazar membrana y o-ring.",
+          "foto": "assets/3115301000-instalada.png"
+        },
+        {
+          "orden": 3,
+          "texto": "Montar y recargar con nitrógeno a la presión especificada.",
+          "torqueNm": 90
+        },
+        {
+          "orden": 4,
+          "texto": "Verificar ausencia de fugas y registrar la presión final."
+        }
+      ],
+      "duracionMin": 75
+    }
+  ],
+  "kits": [
+    {
+      "id": "kit-servicio-500",
+      "nombre": "Kit de servicio 500 hrs",
+      "partNumber": "3115-9000-00",
+      "piezaIds": [
+        "p-piston",
+        "p-sello-piston-alta",
+        "p-oring-acumulador",
+        "p-filtro-retorno",
+        "p-perno-lateral",
+        "p-pasador-retencion"
+      ]
+    },
+    {
+      "id": "kit-sellos-hidraulico",
+      "nombre": "Kit de sellos hidráulico",
+      "partNumber": "3115-9100-00",
+      "piezaIds": [
+        "p-sello-piston-alta",
+        "p-sello-piston-baja",
+        "p-membrana-acumulador",
+        "p-oring-acumulador",
+        "p-guardapolvo"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "ruta": "assets/3115200100-aislada.png",
+      "hash": "01067b431e31f7accb87ac308a4666ada82b77b0fd4558492b2f2dd86d7bf53a",
+      "kb": 26.7
+    },
+    {
+      "ruta": "assets/3115200500-aislada.png",
+      "hash": "27ecf4059aaef93b47dd52d1653fb4179e3af7b84e6502c853560fe5ee99eb4e",
+      "kb": 28.4
+    },
+    {
+      "ruta": "assets/3115201000-aislada.png",
+      "hash": "e07b9926848f1a3522aab08f0c227692e9a7789b1ee9a2267007ce9e080c00d7",
+      "kb": 28.3
+    },
+    {
+      "ruta": "assets/3115201000-desgastada.png",
+      "hash": "309b430eb3aec0c52cdb19e6f29d84ce949cefe5f8cd8ef956c87a8684d7ff80",
+      "kb": 30.4
+    },
+    {
+      "ruta": "assets/3115201000-instalada.png",
+      "hash": "45354b1fc09393c934a0bc62f5799293bf09108f33c18eefda23be40fd7fcb8f",
+      "kb": 29.2
+    },
+    {
+      "ruta": "assets/3115201500-aislada.png",
+      "hash": "003a70c609dca1d26f93f53ab55e9d7c0d73d1d39a6e4a71be26f83784c0cb31",
+      "kb": 28.7
+    },
+    {
+      "ruta": "assets/3115205000-aislada.png",
+      "hash": "10709f53b8b3acc5698ff764750fec13ae2c2877def079dfa2a2a33473502b1c",
+      "kb": 28.9
+    },
+    {
+      "ruta": "assets/3115205000-instalada.png",
+      "hash": "ff41a4e43df586644c62684802e346a1a65f5e2d548b09d659e6946e62024835",
+      "kb": 29.8
+    },
+    {
+      "ruta": "assets/3115205100-aislada.png",
+      "hash": "7b7a791f4cced916c75a722947bd95bb0f9ae14b5a30b1409cb66ff5d404ae97",
+      "kb": 28.6
+    },
+    {
+      "ruta": "assets/3115287100-aislada.png",
+      "hash": "cfcdbfb13238568b46603522457c8e6e2efcfcac53857a38ca70e7ceba07c527",
+      "kb": 30.7
+    },
+    {
+      "ruta": "assets/3115287100-desgastada.png",
+      "hash": "46f564efce1249bb0a36fc8dd1eabcd02d84a37d13304041b054b9baf8158669",
+      "kb": 32.7
+    },
+    {
+      "ruta": "assets/3115287200-aislada.png",
+      "hash": "ef9cc760e6e8efb8dcaee90f2fce8ad7be20e24ea340a1fd288fe32c9507b89c",
+      "kb": 31.7
+    },
+    {
+      "ruta": "assets/3115301000-aislada.png",
+      "hash": "0c1d207b7fa4ddb57b1ab47f2bb3f5ebc20e62d28f74fca79065b7c2b81fdb65",
+      "kb": 30.1
+    },
+    {
+      "ruta": "assets/3115301000-instalada.png",
+      "hash": "ed9e31f5d55dbc32e14ee8bde46108a3e4a7e8fa6eb81e8e876c5031a86d5da9",
+      "kb": 31
+    },
+    {
+      "ruta": "assets/3115301100-aislada.png",
+      "hash": "ad5078259c55475f5c65b4e744a0f26d37898b1d8bc2e40501d0fc381bf0ec1b",
+      "kb": 29.4
+    },
+    {
+      "ruta": "assets/3115301200-aislada.png",
+      "hash": "eb0e5e99798d5e173b9e8ea627205a7f075a4c1139054499289cccee2e6a72bf",
+      "kb": 28.6
+    },
+    {
+      "ruta": "assets/3115302000-aislada.png",
+      "hash": "be51979bdae87e6c423ea0d58c7d029e8b561a24e36cc87d72ae9c78c1e8c4b5",
+      "kb": 29.9
+    },
+    {
+      "ruta": "assets/3115302100-aislada.png",
+      "hash": "2a6d6f6dc08466900be8d3aeae5dd716ee125a1fa92ed7c0201b07cd6873b85f",
+      "kb": 29.6
+    },
+    {
+      "ruta": "assets/3115303000-aislada.png",
+      "hash": "435724fcba2c9cceb9dad8f3aacbdd78360d943d20ddd63061130da1fffc6deb",
+      "kb": 31
+    },
+    {
+      "ruta": "assets/3115304000-aislada.png",
+      "hash": "2b7415d747a6442d8344438c7cc5dc3e416bafabfae14d50e265459eca9c5c87",
+      "kb": 26.5
+    },
+    {
+      "ruta": "assets/3115304000-desgastada.png",
+      "hash": "30ce5e374024794bfe93e12a7dcec8bfbb434c9bf65a6959b4eb2068671cc7b3",
+      "kb": 28.6
+    },
+    {
+      "ruta": "assets/3115401000-aislada.png",
+      "hash": "3902572b22c81bdb9dc3e455ad5d7971eb56b4b1de3a6fcb1ef2fa23c78d9b78",
+      "kb": 29.1
+    },
+    {
+      "ruta": "assets/3115401000-desgastada.png",
+      "hash": "a817a05c67cdd2657d4e127ca44dbf2f069dd08160d0d9553a4ab5177a509d83",
+      "kb": 31.2
+    },
+    {
+      "ruta": "assets/3115401000-instalada.png",
+      "hash": "13f4ac73dd3035bd51a53cb521144375cbd8ad815779d54a0f50e5fb09fb9af7",
+      "kb": 30
+    },
+    {
+      "ruta": "assets/3115401100-aislada.png",
+      "hash": "e16053d744e9137600321e1f03e0b094df90569b6dc9b059ac62f9f5ef7e3008",
+      "kb": 31.7
+    },
+    {
+      "ruta": "assets/3115401200-aislada.png",
+      "hash": "bcb37695db32afa7788060f7b324c013cddd5631b532298eb6b14c8e343144e7",
+      "kb": 31.2
+    },
+    {
+      "ruta": "assets/3115401300-aislada.png",
+      "hash": "1c7b6cea02b67911535817f8e29caed7fa54b8762e746702c874175e886c048e",
+      "kb": 32.2
+    },
+    {
+      "ruta": "assets/3115401400-aislada.png",
+      "hash": "1bf63c9ee888540ccfaba17e59f77c59b69d9b58ac62557d2f0bfba2bec10eab",
+      "kb": 28.6
+    },
+    {
+      "ruta": "assets/activo-bx40.png",
+      "hash": "a16eb57c5ed16bb80005f948c2254446023b1743dcb48d2a4b29200a7364eb35",
+      "kb": 22.5
+    }
+  ]
+}
