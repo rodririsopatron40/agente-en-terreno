@@ -34,6 +34,12 @@ export function ProcedimientoView({
   function toggle(orden: number) {
     setMarcados((prev) => {
       const next = toggleMarcado(prev, orden)
+      // Persistencia fire-and-forget: no esperamos ni atrapamos el error de escritura.
+      // Deuda: si esta escritura falla, el paso queda marcado en pantalla pero no en
+      // Dexie (se pierde al reabrir). El fix futuro NO es revertir a `prev` del closure
+      // (pisaria toggles que el usuario haya hecho despues de este); es revertir SOLO el
+      // paso fallido (re-togglear ese `orden`) o releer el estado real de Dexie
+      // (getProgreso) y resincronizar.
       void setProgreso(pack.packId, proc.id, next)
       return next
     })
@@ -84,8 +90,9 @@ export function ProcedimientoView({
                 Herramientas
               </h3>
               <ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm text-neutral-200">
-                {proc.herramientas.map((h) => (
-                  <li key={h}>{h}</li>
+                {/* Key por indice compuesto: dos herramientas podrian repetir texto. */}
+                {proc.herramientas.map((h, i) => (
+                  <li key={`${i}-${h}`}>{h}</li>
                 ))}
               </ul>
             </div>
@@ -104,8 +111,9 @@ export function ProcedimientoView({
                 <span aria-hidden>⚠</span> Seguridad, leer antes de comenzar
               </h3>
               <ul className="mt-2 space-y-1.5 text-sm text-red-100">
-                {proc.seguridad.map((s) => (
-                  <li key={s} className="flex gap-2">
+                {/* Key por indice compuesto: dos advertencias podrian repetir texto. */}
+                {proc.seguridad.map((s, i) => (
+                  <li key={`${i}-${s}`} className="flex gap-2">
                     <span aria-hidden className="text-red-300">
                       •
                     </span>
@@ -115,6 +123,16 @@ export function ProcedimientoView({
               </ul>
             </div>
 
+            {/*
+              Gate de seguridad (obligatorio, primero, no saltable). Ademas de la
+              regla de Fase 3, este gate BLINDA la carrera carga-vs-toggle: el efecto
+              de montaje carga `marcados` desde Dexie de forma asincrona, y los pasos
+              (unico lugar donde se togglea) solo se renderizan en fase 'pasos'. Para
+              cuando el usuario cruza este gate, esa carga ya resolvio -> un toggle no
+              puede ser pisado por una carga tardia. Si algun dia el gate se vuelve
+              CONDICIONAL (saltable), la garantia se cae: agregar un flag `cargado` que
+              difiera toggle/persistencia hasta que la carga inicial resuelva.
+            */}
             <button
               onClick={() => setFase('pasos')}
               className="mt-4 min-h-12 w-full rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white active:bg-emerald-700"

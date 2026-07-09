@@ -57,6 +57,21 @@ Nota del planificador: orden de fases invertido. Fase 3 = Procedimientos (esta),
 
 **Verificado:** typecheck:tools OK; `npm test` 21 verdes (incluye toggle/persistencia de checklist y los 4 casos de árbol inválido: rama colgante, nodo ambiguo, profundidad>8, ciclo); validate OK; build limpio; headless 380px: ficha->procedimiento->seguridad-primero->checklist; marcar pasos 2 y 4, recargar (cerrar/reabrir), reabrir -> seguridad reaparece y checks persisten ("Paso 2 de 5", marcados [2,4]); stub de pedido escribe en Dexie; flechas de carrusel visibles/funcionales en desktop, ocultas en móvil. Sin errores de consola.
 
+## Fase 4 — Diagnóstico guiado — HECHO (2026-07-07)
+Pestaña "Síntomas" (entre Catálogo y Packs, deshabilitada sin pack activo). Lista de síntomas agrupada por sistema (mismo orden que el catálogo) -> wizard de una pregunta por pantalla -> pantalla de resultado.
+
+**Wizard:** una pregunta por pantalla; opciones como botones (56px, >=48 WCAG); "← Volver" retrocede un paso y en la primera pregunta vuelve a la lista. El resultado muestra: nota ("Posible causa"), piezas culpables (cada una linkea a su ficha reusando el overlay del catálogo vía `onSelectPieza`), "Ver procedimiento de reparación" (abre la vista REAL de Fase 3, que arranca en su gate de seguridad) y "Volver a empezar" (reset a la lista). Un síntoma con raíz-hoja (ej. "La herramienta se traba") muestra el resultado directo, sin preguntas.
+
+**Estado en memoria (no persistido):** el wizard vive en `useState` de `Sintomas` (fallaId + camino de índices + procedimiento abierto). Reiniciar al cerrar/recargar es el comportamiento correcto (DoD); cambiar de pestaña también lo descarta.
+
+**Navegación pura y total:** `domain/diagnostico.ts` (`nodoEnRuta`, `esHoja`, `esRama`). `nodoEnRuta` camina por índices y es TOTAL: un índice inválido detiene el paseo en el último nodo alcanzable en vez de lanzar. Eso blinda retroceder/reiniciar (el peor caso es quedar en un nodo válido, nunca corrupto). La estructura del árbol ya la garantiza `validarEstructuraArbol` (Fase 3), así que el wizard confía en la forma. El heading "Piezas a revisar" usa `t.pieza` (white-label).
+
+**Deuda del inquisidor (misma sesión):** (1) keys de listas en `ProcedimientoView` (herramientas/seguridad) por índice compuesto `${i}-${valor}`, no por contenido (dos strings iguales colisionaban). (2) Comentario junto al gate de seguridad: documenta que el gate blinda la carrera carga-vs-toggle (la carga async de Dexie resuelve mientras el usuario lee seguridad; el toggle solo existe en fase 'pasos'); si el gate se vuelve condicional, agregar flag `cargado`. (3) Nota corregida del fire-and-forget en `toggle`: el fix futuro NO es revertir a `prev` del closure (pisaría toggles posteriores), sino revertir solo el paso fallido (re-togglear ese `orden`) o releer de Dexie.
+
+**Inquisidor (auto-revisión del diff, misma sesión):** dos hallazgos en el propio código de Fase 4, corregidos. (a) `reiniciar`/`retroceder`-a-lista no limpiaban `verProc` (reset incompleto; hoy inalcanzable porque el overlay z-20 tapa los botones, pero contradice el "reset total" del DoD) -> `reiniciar` ahora hace `setVerProc(null)`. (b) `nodo.opciones!` solo estaba protegido por `!esHoja`: un nodo "ni hoja ni rama" (pack malformado, no re-validado en runtime) crasheaba, y el comentario prometía un "fin defensivo" que el código no tenía -> se gatea `Pregunta` tras `esRama` y se agrega fallback. Test nuevo que fija el contrato (nodo vacío no es hoja ni rama).
+
+**Verificado:** typecheck:tools OK; `npm test` 31 verdes (10 nuevos: todo resultado alcanzable resuelve piezas+procedimiento; camino vacío = raíz; síntoma sin preguntas = resultado directo; navegar a hoja; retroceder vuelve a la rama padre; re-caminar determinista; índice fuera de rango no lanza; nodo vacío ni hoja ni rama); build limpio; oxlint sin warnings nuevos. Headless 380px: lista agrupada (3 sistemas, 6 síntomas), wizard de 2 niveles, botones medidos 56px, resultado con nota + 2 culpables que linkean a la ficha correcta, "Ver procedimiento" abre la vista real con su gate de seguridad, retroceder RESULT->Q2->Q1 y re-responder la otra rama da el resultado distinto correcto (sin corrupción), "Volver a empezar" resetea a la lista (sin overlay colgando), síntoma raíz-hoja directo. Sin errores de consola.
+
 ## Plan de verificación Safari/iOS (ejecución manual del usuario)
 Objetivo: confirmar PWA instalable + offline real en iPhone. Requiere que el sitio esté servido por HTTPS (o el preview en la LAN); `localhost` no instala PWA en iOS.
 
@@ -74,4 +89,4 @@ Objetivo: confirmar PWA instalable + offline real en iPhone. Requiere que el sit
 
 Puntos de riesgo conocidos en iOS: (a) cuota de almacenamiento de Safari puede evictar IndexedDB/Cache si el equipo está bajo presión de espacio; (b) el SW requiere HTTPS; (c) `navigator.onLine` en iOS a veces tarda en reflejar el modo avión.
 
-**Siguiente (Fase 4 — Diagnóstico guiado):** alcance aprobado con dos cambios: el resultado linkea al procedimiento (ya funcional), y el estado del wizard NO se persiste (memoria; reiniciar al cerrar es correcto). La validación de árboles ya está lista.
+**Siguiente (Fase 5 — IA/RAG):** el insumo del RAG ya está en el pack (`descripcionVisual` por pieza). Pendiente además el envío real del pedido (hoy stub idempotente en Dexie, tabla `pedido`).

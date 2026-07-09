@@ -18,11 +18,12 @@ import { OnlineBadge } from './ui/OnlineBadge'
 import { PackManager } from './features/packs/PackManager'
 import { Catalogo } from './features/catalogo/Catalogo'
 import { PiezaDetail } from './features/catalogo/PiezaDetail'
+import { Sintomas } from './features/diagnostico/Sintomas'
 
 const STORAGE_KEY = 'vertical-activo'
 const DEFAULT_VERTICAL = 'mineria-cl'
 
-type Vista = 'packs' | 'catalogo'
+type Vista = 'packs' | 'catalogo' | 'sintomas'
 
 function App() {
   // Vertical / white-label (Fase 0)
@@ -138,21 +139,16 @@ function App() {
         <Tab activo={vista === 'catalogo'} disabled={!active} onClick={() => setVista('catalogo')}>
           Catálogo
         </Tab>
+        <Tab activo={vista === 'sintomas'} disabled={!active} onClick={() => setVista('sintomas')}>
+          Síntomas
+        </Tab>
         <Tab activo={vista === 'packs'} onClick={() => setVista('packs')}>
           Packs
         </Tab>
       </nav>
 
       <div className="flex-1 p-4">
-        {vista === 'catalogo' ? (
-          active ? (
-            <Catalogo pack={active.pack} ms={active.ms} t={t} onSelect={setPieza} />
-          ) : (
-            <p className="text-sm text-neutral-500">
-              Descarga un {t.activo.toLowerCase()} en la pestaña Packs para empezar.
-            </p>
-          )
-        ) : (
+        {vista === 'packs' ? (
           <PackManager
             available={available}
             installed={installed}
@@ -161,6 +157,19 @@ function App() {
               const act = await refreshPacks()
               if (act) setVista('catalogo')
             }}
+          />
+        ) : !active ? (
+          <p className="text-sm text-neutral-500">
+            Descarga un {t.activo.toLowerCase()} en la pestaña Packs para empezar.
+          </p>
+        ) : vista === 'catalogo' ? (
+          <Catalogo pack={active.pack} ms={active.ms} t={t} onSelect={setPieza} />
+        ) : (
+          <Sintomas
+            pack={active.pack}
+            path={active.stored.path}
+            t={t}
+            onSelectPieza={setPieza}
           />
         )}
       </div>
