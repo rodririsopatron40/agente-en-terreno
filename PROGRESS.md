@@ -72,6 +72,31 @@ Pestaña "Síntomas" (entre Catálogo y Packs, deshabilitada sin pack activo). L
 
 **Verificado:** typecheck:tools OK; `npm test` 31 verdes (10 nuevos: todo resultado alcanzable resuelve piezas+procedimiento; camino vacío = raíz; síntoma sin preguntas = resultado directo; navegar a hoja; retroceder vuelve a la rama padre; re-caminar determinista; índice fuera de rango no lanza; nodo vacío ni hoja ni rama); build limpio; oxlint sin warnings nuevos. Headless 380px: lista agrupada (3 sistemas, 6 síntomas), wizard de 2 niveles, botones medidos 56px, resultado con nota + 2 culpables que linkean a la ficha correcta, "Ver procedimiento" abre la vista real con su gate de seguridad, retroceder RESULT->Q2->Q1 y re-responder la otra rama da el resultado distinto correcto (sin corrupción), "Volver a empezar" resetea a la lista (sin overlay colgando), síntoma raíz-hoja directo. Sin errores de consola.
 
+## Fase 4 Deployment — HECHO (2026-07-10)
+**RESOLUCIÓN:** Repo hecho público en GitHub → deploy recién empujado (commit `3d1c10b`) pasó sin bloqueos → Vercel Ready (green) → todos los packs (969K, 31 archivos) ya en `dist/packs/` → `/packs/index.json` respondiendo correctamente → app completamente funcional en producción.
+
+**URL pública (Vercel):** https://agente-en-terreno.vercel.app/
+
+**Verificado end-to-end en navegador (2026-07-10):**
+- **Catálogo:** búsqueda + listado de piezas por sistema (PERCUSIÓN, HIDRÁULICO, etc.) funcional, fichas con fotos/specs/procedimientos
+- **Síntomas:** lista de 6 síntomas agrupada en 3 sistemas, wizard de preguntas respondiendo correctamente ("Ruido metálico anormal" → "¿El ruido aparece solo al golpear?" con 2 opciones botón)
+- **Packs:** HidroMax BX-40 listado en DISPONIBLES (0.87 MB, 20 piezas) sin "Cargando..." eterno; también en INSTALADOS con versión (v2); índice JSON servido correctamente
+- **Indicador online:** verde ("En línea")
+- **White-label minería:** activo ("Soporte Terreno Minero", "Distribuidor de Maquinaria")
+
+**Root cause del "Cargando..." eterno (diagrama final):**
+1. Vercel Hobby plan **bloquea deploys** de repos privados si el commit author no tiene "contributing access"
+2. Commit `e1e3609` ("Commit del pack mock para el deploy en Vercel") empujó 31 archivos (pack + 29 PNGs) pero quedó marcado como "Blocked" porque era de un autor que Vercel no reconocía
+3. Hacer repo público en GitHub Settings no **retroactivamente** desbloquea ese deploy viejo; quedó marcado "Blocked Stale"
+4. Solución: nuevo commit (`3d1c10b`, trivial/empty, solo para trigger) → Vercel crea deploy nuevo → sin bloqueo porque ahora el repo es público
+5. Deploy nuevo pasa (Ready, green) → packs disponibles → app funciona
+
+**Deployment timeline:**
+- `e1e3609` (Blocked, 2d ago): packs commiteados pero Vercel rechaza deploy por plan Hobby + repo privado
+- Cambio a público (Settings > Danger Zone > Change visibility > public)
+- `3d1c10b` (Ready, 3m ago): commit vacío "chore: trigger Vercel redeploy (repo now public)" → nueva tentativa
+- Vercel ahora acepta → build OK → packs en dist → app live
+
 ## Plan de verificación Safari/iOS (ejecución manual del usuario)
 Objetivo: confirmar PWA instalable + offline real en iPhone. Requiere que el sitio esté servido por HTTPS (o el preview en la LAN); `localhost` no instala PWA en iOS.
 
