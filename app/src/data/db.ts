@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie'
-import type { Pack } from '../domain/types'
+import type { Orden, Pack } from '../domain/types'
 
 // Un pack importado se guarda como un unico registro (el JSON estructurado es
 // pequeno aun para catalogos grandes; las imagenes van a Cache Storage aparte).
@@ -29,8 +29,9 @@ export interface ProcProgreso {
   updatedAt: number
 }
 
-// Intencion de pedido (stub de Fase 3; el flujo real es fase posterior).
-// clave = `${packId}:${tipo}:${refId}` -> re-agregar es idempotente.
+// Item del carrito. clave = `${packId}:${tipo}:${refId}` -> re-agregar es
+// idempotente (no duplica ni reinicia la cantidad). `cantidad` es editable en
+// el carrito; filas viejas (v2, sin el campo) se leen como cantidad 1.
 export interface PedidoIntent {
   clave: string
   packId: string
@@ -38,6 +39,7 @@ export interface PedidoIntent {
   refId: string
   nombre: string
   partNumber: string
+  cantidad: number
   addedAt: number
 }
 
@@ -46,6 +48,7 @@ class TerrenoDB extends Dexie {
   meta!: Table<MetaKV, string>
   progreso!: Table<ProcProgreso, string>
   pedido!: Table<PedidoIntent, string>
+  ordenes!: Table<Orden, string>
 
   constructor() {
     super('terreno')
@@ -59,6 +62,16 @@ class TerrenoDB extends Dexie {
       meta: 'key',
       progreso: 'id, packId',
       pedido: 'clave, packId',
+    })
+    // v3: ordenes generadas (cola de envio + historial). `cantidad` se agrega a
+    // `pedido` sin cambiar su indice -> las filas v2 no necesitan migracion (se
+    // leen con default 1). Solo la tabla nueva justifica el bump de version.
+    this.version(3).stores({
+      packs: 'packId, version',
+      meta: 'key',
+      progreso: 'id, packId',
+      pedido: 'clave, packId',
+      ordenes: 'id, estado, createdAt',
     })
   }
 }

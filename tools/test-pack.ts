@@ -7,7 +7,8 @@ import { planAssetDelta } from '../app/src/domain/packDelta'
 import { toggleMarcado, progresoResumen } from '../app/src/domain/checklist'
 import { validarEstructuraArbol, hojasDeArbol } from '../app/src/domain/arbolDiagnostico'
 import { nodoEnRuta, esHoja, esRama } from '../app/src/domain/diagnostico'
-import type { NodoDiagnostico, Pack } from '../app/src/domain/types'
+import { clampCantidad, construirMensaje, mailtoLink, waLink } from '../app/src/domain/pedido'
+import type { NodoDiagnostico, Orden, Pack } from '../app/src/domain/types'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const pack = JSON.parse(
@@ -140,6 +141,57 @@ check('basura tras una opcion valida se detiene en la rama', esRama(nodoEnRuta(a
 // (evita el crash de opciones! -> cae al fallback defensivo).
 const nodoVacio = {} as NodoDiagnostico
 check('nodo vacio no es ni hoja ni rama', !esHoja(nodoVacio) && !esRama(nodoVacio))
+
+// --- Fase Pedidos: construccion del mensaje y links (logica pura) ---
+// Orden de prueba con 2 lineas reales del pack (piezas distintas).
+const p0 = pack.piezas[0]
+const p1 = pack.piezas[1]
+const ordenPrueba: Orden = {
+  id: 'test:1',
+  packId: pack.packId,
+  equipoNombre: pack.activo.nombre,
+  lineas: [
+    { tipo: 'pieza', nombre: p0.nombre, partNumber: p0.partNumber, cantidad: 2 },
+    { tipo: 'pieza', nombre: p1.nombre, partNumber: p1.partNumber, cantidad: 1 },
+  ],
+  solicitante: { nombre: 'Juan Perez', empresa: 'Faena Norte', telefono: '+56911112222' },
+  estado: 'pendiente',
+  createdAt: 1,
+}
+const msg = construirMensaje(ordenPrueba)
+// DoD: TODOS los part numbers del pedido aparecen en el mensaje.
+check(
+  'mensaje incluye todos los part numbers del pedido',
+  msg.includes(p0.partNumber) && msg.includes(p1.partNumber),
+)
+check('mensaje incluye la cantidad por linea', msg.includes('2x') && msg.includes('1x'))
+check(
+  'mensaje incluye datos del solicitante',
+  msg.includes('Juan Perez') && msg.includes('Faena Norte') && msg.includes('+56911112222'),
+)
+check('mensaje incluye el nombre del equipo', msg.includes(pack.activo.nombre))
+// Determinista: mismos datos -> mismo texto.
+check('construirMensaje es determinista', construirMensaje(ordenPrueba) === msg)
+
+// clampCantidad: entero >= 1, blinda inputs raros.
+check('clampCantidad(0) = 1', clampCantidad(0) === 1)
+check('clampCantidad(-5) = 1', clampCantidad(-5) === 1)
+check('clampCantidad(2.9) = 2', clampCantidad(2.9) === 2)
+check('clampCantidad(NaN) = 1', clampCantidad(NaN) === 1)
+check('clampCantidad(3) = 3', clampCantidad(3) === 3)
+
+// waLink: numero solo con digitos, mensaje URL-encoded.
+{
+  const link = waLink('+56 9 1111-2222', 'hola mundo')
+  check('waLink limpia el numero a solo digitos', link.startsWith('https://wa.me/56911112222?text='))
+  check('waLink codifica el mensaje (sin espacios crudos)', !link.includes('hola mundo'))
+}
+// mailtoLink: asunto y cuerpo codificados.
+{
+  const link = mailtoLink('a@b.cl', 'Pedido X', 'linea 1\nlinea 2')
+  check('mailtoLink arma subject y body', link.startsWith('mailto:a@b.cl?subject=') && link.includes('&body='))
+  check('mailtoLink codifica saltos de linea', link.includes('%0A'))
+}
 
 console.log(fallas ? `\n${fallas} FALLA(s)` : '\nTODO OK')
 process.exit(fallas ? 1 : 0)

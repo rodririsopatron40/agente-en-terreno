@@ -19,11 +19,13 @@ import { PackManager } from './features/packs/PackManager'
 import { Catalogo } from './features/catalogo/Catalogo'
 import { PiezaDetail } from './features/catalogo/PiezaDetail'
 import { Sintomas } from './features/diagnostico/Sintomas'
+import { PedidoView } from './features/pedido/PedidoView'
+import { contarPedido } from './data/procedimientoRepo'
 
 const STORAGE_KEY = 'vertical-activo'
 const DEFAULT_VERTICAL = 'mineria-cl'
 
-type Vista = 'packs' | 'catalogo' | 'sintomas'
+type Vista = 'packs' | 'catalogo' | 'sintomas' | 'pedido'
 
 function App() {
   // Vertical / white-label (Fase 0)
@@ -41,6 +43,7 @@ function App() {
   const [vista, setVista] = useState<Vista>('packs')
   const [pieza, setPieza] = useState<Pieza | null>(null)
   const [online, setOnline] = useState(navigator.onLine)
+  const [cartCount, setCartCount] = useState(0)
 
   useEffect(() => {
     listVerticales()
@@ -93,6 +96,16 @@ function App() {
     }
   }, [vista, online])
 
+  // Badge del carrito: refresca al cargar pack, al cerrar una ficha (posible
+  // "Agregar al pedido") y al cambiar de pestana.
+  useEffect(() => {
+    if (!active) {
+      setCartCount(0)
+      return
+    }
+    void contarPedido(active.pack.packId).then(setCartCount)
+  }, [active, pieza, vista])
+
   async function refreshPacks(): Promise<ActivePack | null> {
     const [inst, act] = await Promise.all([listInstalled(), loadActivePack()])
     setInstalled(inst)
@@ -142,6 +155,14 @@ function App() {
         <Tab activo={vista === 'sintomas'} disabled={!active} onClick={() => setVista('sintomas')}>
           Síntomas
         </Tab>
+        <Tab
+          activo={vista === 'pedido'}
+          disabled={!active}
+          badge={cartCount}
+          onClick={() => setVista('pedido')}
+        >
+          Pedido
+        </Tab>
         <Tab activo={vista === 'packs'} onClick={() => setVista('packs')}>
           Packs
         </Tab>
@@ -164,12 +185,22 @@ function App() {
           </p>
         ) : vista === 'catalogo' ? (
           <Catalogo pack={active.pack} ms={active.ms} t={t} onSelect={setPieza} />
-        ) : (
+        ) : vista === 'sintomas' ? (
           <Sintomas
             pack={active.pack}
             path={active.stored.path}
             t={t}
             onSelectPieza={setPieza}
+          />
+        ) : (
+          <PedidoView
+            pack={active.pack}
+            pedidos={config.pedidos}
+            t={t}
+            online={online}
+            onCambio={() => {
+              void contarPedido(active.pack.packId).then(setCartCount)
+            }}
           />
         )}
       </div>
@@ -190,11 +221,13 @@ function App() {
 function Tab({
   activo,
   disabled,
+  badge,
   onClick,
   children,
 }: {
   activo: boolean
   disabled?: boolean
+  badge?: number
   onClick: () => void
   children: string
 }) {
@@ -202,12 +235,17 @@ function Tab({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`min-h-12 border-b-2 px-4 text-sm font-medium disabled:opacity-30 ${
+      className={`relative min-h-12 border-b-2 px-4 text-sm font-medium disabled:opacity-30 ${
         activo ? 'text-neutral-100' : 'border-transparent text-neutral-400'
       }`}
       style={activo ? { borderColor: 'var(--color-acento)' } : undefined}
     >
       {children}
+      {badge != null && badge > 0 && (
+        <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-semibold text-white">
+          {badge}
+        </span>
+      )}
     </button>
   )
 }

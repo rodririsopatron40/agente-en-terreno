@@ -145,3 +145,35 @@ export interface AssetManifest {
   hash: string; // sha256 hex
   kb: number;
 }
+
+// ---------- Pedidos (Fase Pedidos) ----------
+// Datos de quien solicita. Se piden una vez y quedan guardados (meta KV).
+export interface Solicitante {
+  nombre: string;
+  empresa: string; // empresa / faena
+  telefono: string;
+}
+
+// Una linea de una orden ya generada. Es un SNAPSHOT: guarda nombre y part
+// number al momento de crear la orden, para que el texto sea correcto aunque
+// el pack se actualice o se borre despues.
+export interface OrdenLinea {
+  tipo: 'pieza' | 'kit';
+  nombre: string;
+  partNumber: string;
+  cantidad: number;
+}
+
+// Una orden generada desde el carrito. Vive en cola (pendiente) hasta enviarse
+// por WhatsApp/email; luego queda en el historial (enviado). Sin backend.
+export interface Orden {
+  id: string; // `${packId}:${createdAt}`
+  packId: string;
+  equipoNombre: string; // snapshot del activo.nombre
+  lineas: OrdenLinea[];
+  solicitante: Solicitante;
+  estado: 'pendiente' | 'enviado';
+  canal?: 'whatsapp' | 'email';
+  createdAt: number;
+  sentAt?: number;
+}

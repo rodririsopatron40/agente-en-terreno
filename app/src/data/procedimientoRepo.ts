@@ -15,14 +15,19 @@ export async function setProgreso(packId: string, procId: string, marcados: numb
   await db.progreso.put({ id: `${packId}:${procId}`, packId, procId, marcados, updatedAt: Date.now() })
 }
 
-// Stub de pedido: guarda la intencion. El flujo real (WhatsApp/email) es fase posterior.
+// Agrega un item al carrito. Idempotente: re-agregar el mismo item NO duplica
+// ni reinicia su cantidad ni su antiguedad (preserva lo que el usuario ya
+// ajusto en el carrito). La cantidad/envio del pedido viven en pedidoRepo.
 export async function agregarAPedido(
-  item: Omit<PedidoIntent, 'clave' | 'addedAt'>,
+  item: Omit<PedidoIntent, 'clave' | 'cantidad' | 'addedAt'>,
 ): Promise<void> {
+  const clave = `${item.packId}:${item.tipo}:${item.refId}`
+  const existente = await db.pedido.get(clave)
   await db.pedido.put({
     ...item,
-    clave: `${item.packId}:${item.tipo}:${item.refId}`,
-    addedAt: Date.now(),
+    clave,
+    cantidad: existente?.cantidad ?? 1,
+    addedAt: existente?.addedAt ?? Date.now(),
   })
 }
 

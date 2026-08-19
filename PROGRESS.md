@@ -97,6 +97,27 @@ Pestaña "Síntomas" (entre Catálogo y Packs, deshabilitada sin pack activo). L
 - `3d1c10b` (Ready, 3m ago): commit vacío "chore: trigger Vercel redeploy (repo now public)" → nueva tentativa
 - Vercel ahora acepta → build OK → packs en dist → app live
 
+## Fase Pedidos — HECHO (2026-07-10)
+Pestaña "Pedido" (entre Síntomas y Packs, deshabilitada sin pack activo, con badge de cantidad del carrito). Carrito editable -> datos de contacto persistidos -> generar orden -> cola de envío (WhatsApp/email) -> historial. Sin backend.
+
+**Carrito:** reutiliza la tabla `pedido` (intenciones de los stubs de Fase 3). Cantidades editables con steppers (− n +), quitar ítem (×). `agregarAPedido` ahora es idempotente SIN resetear: re-agregar preserva la cantidad y la antigüedad que el usuario ya ajustó (antes hacía `put` que reiniciaba). Vaciar automático al generar la orden.
+
+**Solicitante:** nombre + empresa/faena + teléfono, persistidos en `meta` KV (`solicitante`, JSON). Se piden la primera vez (form abierto), luego colapsan a resumen con "Editar". Generar requiere nombre y teléfono no vacíos.
+
+**Órdenes (cola + historial):** tabla nueva `ordenes` (Dexie **v3**). `crearOrden` congela un SNAPSHOT del carrito (nombre + part number + cantidad por línea, + equipo, + solicitante) -> el texto del pedido queda correcto aunque el pack se actualice o borre. Estado `pendiente` -> `enviado`. "Reenviar" reabre a pendiente.
+
+**Envío:** `domain/pedido.ts` (puro, testeable): `construirMensaje` (texto estructurado con todos los part numbers y cantidades), `waLink` (limpia el número a solo dígitos para wa.me + encode), `mailtoLink` (subject+body encoded), `clampCantidad` (entero >=1). WhatsApp abre `wa.me` en pestaña nueva; email va por `location.href` (evita pestaña en blanco). El número/email salen del `vertical.config.pedidos` (minería tiene ambos; automotriz solo email -> el botón WhatsApp se oculta solo).
+
+**Cola offline (DoD central):** el envío se gatea con `navigator.onLine`. Sin señal, la orden pendiente muestra nota ámbar "Sin conexión, se enviará al reconectar" y oculta los botones de envío; al volver la conexión reaparecen (los listeners online/offline de App re-renderizan). La orden persiste en Dexie -> crear en modo avión, reconectar y enviar con un tap.
+
+**Dexie v3:** `cantidad` se agrega a `pedido` sin cambiar índice (filas v2 se leen con default 1, sin migración); la tabla `ordenes` (índices `id, estado, createdAt`) justifica el bump. Lógica pura en `domain/pedido.ts`; repo en `data/pedidoRepo.ts` (carrito CRUD, solicitante, órdenes). Tipos `Solicitante`/`OrdenLinea`/`Orden` en `domain/types.ts`.
+
+**Inquisidor (auto-revisión del diff, misma sesión):** un papercut corregido — `window.open('mailto:')` dejaba pestaña en blanco -> email ahora por `location.href`. Observación documentada (no bug): la lista de órdenes es global entre packs; una orden pendiente vista bajo otro vertical ofrece los canales de ESE vertical (el snapshot de part numbers queda intacto).
+
+**Verificado:** `npm test` verde (13 tests nuevos: mensaje incluye TODOS los part numbers + cantidades + solicitante + equipo; determinismo; `clampCantidad` 0/-5/2.9/NaN/3; `waLink` limpia número y encodea; `mailtoLink` subject/body/saltos de línea); typecheck:tools OK; build limpio; oxlint sin warnings nuevos (queda 1 preexistente en App.tsx:52). Navegador (preview :5180, 375px): descargar pack -> agregar 2 piezas desde fichas -> badge "2" -> carrito con ambas + steppers -> subir Pistón a 3 -> llenar contacto (colapsa a resumen) -> generar (carrito se vacía, badge a 0) -> PENDIENTES muestra "4 unidades · 2 ítems" con detalle -> interceptar `window.open`: link `https://wa.me/56990000000?text=...` con mensaje decodificado correcto (3x Pistón 3115-2010-00, 1x Sello 3115-2871-00, datos de Juan Pérez) -> orden pasa a ENVIADOS con "Reenviar" -> nueva orden + simular offline: nota ámbar + botones ocultos; online: botones reaparecen -> reload: pendiente + historial + solicitante PERSISTEN. Sin errores de consola.
+
+**Pendiente (tuyo):** deep-link real de WhatsApp/email en teléfono físico (parte de la prueba Android/iPhone). Deploy: el diff está en local, falta `git push` para que Vercel lo publique.
+
 ## Plan de verificación Safari/iOS (ejecución manual del usuario)
 Objetivo: confirmar PWA instalable + offline real en iPhone. Requiere que el sitio esté servido por HTTPS (o el preview en la LAN); `localhost` no instala PWA en iOS.
 
