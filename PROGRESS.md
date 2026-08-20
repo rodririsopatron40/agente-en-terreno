@@ -118,6 +118,30 @@ Pestaña "Pedido" (entre Síntomas y Packs, deshabilitada sin pack activo, con b
 
 **Pendiente (tuyo):** deep-link real de WhatsApp/email en teléfono físico (parte de la prueba Android/iPhone). Deploy: el diff está en local, falta `git push` para que Vercel lo publique.
 
+## Ticket Seguridad Demo (candado de contenido) — PARCIAL (2026-08-20)
+Objetivo: proteger el contenido real del cliente antes de cargarlo. Mecanismo CONSTRUIDO y probado en local; despliegue en Vercel PENDIENTE de recuperar acceso a la cuenta.
+
+**Construido y verificado en local:**
+- Función serverless `app/api/packs/[...path].ts`: exige `DEMO_KEY` (env), fail-closed (sin la env, rechaza TODO con 401), guarda de path traversal (`domain/rutaPack.ts`, pura, 13 tests verdes). Sirve solo desde `app/api/_data/packs/` (fuera de /public).
+- App: clave en localStorage, header `X-Demo-Key` en descarga/update; pantalla "Clave de acceso" antes de bajar un pack protegido; clave incorrecta -> se descarta y se vuelve a pedir. Desacople URL descarga (/api, con clave) vs cache/display (/packs, limpia) -> <img>/offline no piden clave; componentes de UI intactos.
+- Mock libre (protegido:false). Pack `cliente-demo` (protegido:true) como fixture del DoD.
+- Build limpio, `npm test` verde, `DEMO_KEY` NO aparece en dist/ (grep), oxlint sin warnings nuevos.
+
+**Estado del despliegue (verificado contra Vercel live):**
+- El sitio estático desplego OK: `/packs/index.json` sirve ambos packs con flag `protegido`.
+- La FUNCION `/api/packs/...` devuelve 404 de Vercel -> no se registro como serverless function. Causa probable: Root Directory = `app` + preset Vite no detecto `app/api/`. No se puede diagnosticar sin los logs de build (dashboard), y el dueño perdio acceso a la cuenta Vercel (2FA en celular robado + correo de empresa inaccesible).
+
+**Postura de seguridad ACTUAL (importante): nada expuesto.** El contenido de `cliente-demo` esta en `app/api/_data/` (NO en /public) y la funcion que lo serviria da 404 -> hoy es INACCESIBLE por completo (sobre-cerrado). El mock libre sigue OK. No hay contenido real de cliente cargado aun.
+
+**Incidente (mismo dia):** un `git add -A` subio por error `material-pv-e/` (material real de Epiroc, "no publicar") al repo publico ~3-4 min. Mitigado: history rewrite + force-push (commit huerfano `c61d934afd2f7bda78445098018fdedfcdeec487` fuera de toda rama), gitignore de `material-pv-e/` y `material-pv-e.zip`, y ticket a GitHub Support #4682485 para purgar el commit cacheado. Leccion: nunca `git add -A`; agregar rutas explicitas.
+
+**Para cerrar el ticket (pendiente, requiere acceso a Vercel):**
+1. Recuperar la cuenta Vercel (o crear una nueva con `pobletefilm@gmail.com` y re-importar el repo).
+2. Con dashboard: ver logs de build para arreglar la deteccion de la funcion (`app/api/`). Opciones a probar: mover `api/` segun lo que pidan los logs, o ajustar Root Directory / vercel.json.
+3. Setear `DEMO_KEY` en Environment Variables.
+4. Verificar DoD: curl a `/api/packs/cliente-demo/pack.json` sin clave -> 401; con clave -> 200 + flujo completo; modo avion intacto.
+5. Inquisidor sobre el diff (pendiente hasta cerrar).
+
 ## Plan de verificación Safari/iOS (ejecución manual del usuario)
 Objetivo: confirmar PWA instalable + offline real en iPhone. Requiere que el sitio esté servido por HTTPS (o el preview en la LAN); `localhost` no instala PWA en iOS.
 
