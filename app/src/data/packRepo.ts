@@ -1,5 +1,6 @@
 import { db, setActivePackId, getActivePackId, type StoredPack } from './db'
 import { cacheAssetVerified, deleteCached } from './assetCache'
+import { ClaveInvalidaError, getAccessKey } from './accessKey'
 import { buildIndex, loadIndex, serializeIndex, type PiezaDoc } from './search'
 import { planAssetDelta } from '../domain/packDelta'
 import type { Pack } from '../domain/types'
@@ -15,6 +16,9 @@ export interface AvailablePack {
   version: number
   piezas: number
   sizeMb: number
+  // Los packs protegidos se sirven por la funcion serverless /api/packs con
+  // clave. Los libres (ej. el mock) siguen estaticos en /public/packs.
+  protegido?: boolean
 }
 
 export interface ImportProgress {
@@ -28,8 +32,16 @@ export interface ActivePack {
   ms: MiniSearch<PiezaDoc>
 }
 
+// URL LIMPIA: donde se cachea y de donde leen las <img> / el service worker.
+// Es la misma para packs libres y protegidos -> los componentes no cambian.
 export function assetUrl(path: string, ruta: string): string {
   return `${BASE}packs/${path}/${ruta}`
+}
+
+// URL de DESCARGA: para packs protegidos apunta a la funcion serverless (que
+// exige clave); para libres es la misma url limpia estatica.
+function descargaUrl(path: string, ruta: string, protegido?: boolean): string {
+  return protegido ? `/api/packs/${path}/${ruta}` : assetUrl(path, ruta)
 }
 
 export async function listAvailable(): Promise<AvailablePack[]> {
@@ -46,11 +58,17 @@ export async function importPack(
   avail: AvailablePack,
   onProgress?: (p: ImportProgress) => void,
 ): Promise<StoredPack> {
-  const pack = await fetchPack(avail.path)
+  const key = avail.protegido ? getAccessKey() : undefined
+  const pack = await fetchPack(avail.path, avail.protegido, key)
   const total = pack.assets.length
   let hechos = 0
   for (const a of pack.assets) {
-    await cacheAssetVerified(assetUrl(avail.path, a.ruta), a.hash)
+    await cacheAssetVerified(
+      descargaUrl(avail.path, a.ruta, avail.protegido),
+      assetUrl(avail.path, a.ruta),
+      a.hash,
+      key,
+    )
     onProgress?.({ hechos: ++hechos, total })
   }
   const stored = toStored(avail, pack)
@@ -65,11 +83,17 @@ export async function updatePack(
 ): Promise<StoredPack> {
   const existing = await db.packs.get(avail.packId)
   if (!existing) return importPack(avail, onProgress)
-  const pack = await fetchPack(avail.path)
+  const key = avail.protegido ? getAccessKey() : undefined
+  const pack = await fetchPack(avail.path, avail.protegido, key)
   const { refetch, remove } = planAssetDelta(existing.pack.assets, pack.assets)
   let hechos = 0
   for (const a of refetch) {
-    await cacheAssetVerified(assetUrl(avail.path, a.ruta), a.hash)
+    await cacheAssetVerified(
+      descargaUrl(avail.path, a.ruta, avail.protegido),
+      assetUrl(avail.path, a.ruta),
+      a.hash,
+      key,
+    )
     onProgress?.({ hechos: ++hechos, total: refetch.length })
   }
   if (remove.length) await deleteCached(remove.map((a) => assetUrl(avail.path, a.ruta)))
@@ -96,8 +120,12 @@ export async function loadActivePack(): Promise<ActivePack | null> {
   return { stored, pack: stored.pack, ms: loadIndex(stored.searchIndex) }
 }
 
-async function fetchPack(path: string): Promise<Pack> {
-  const res = await fetch(assetUrl(path, 'pack.json'), { cache: 'no-store' })
+async function fetchPack(path: string, protegido?: boolean, key?: string): Promise<Pack> {
+  const res = await fetch(descargaUrl(path, 'pack.json', protegido), {
+    cache: 'no-store',
+    headers: protegido && key ? { 'X-Demo-Key': key } : undefined,
+  })
+  if (res.status === 401) throw new ClaveInvalidaError()
   if (!res.ok) throw new Error(`No se pudo descargar el pack (HTTP ${res.status})`)
   const pack = (await res.json()) as Pack
   guardPack(pack)

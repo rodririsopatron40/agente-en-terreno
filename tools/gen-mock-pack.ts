@@ -5,7 +5,7 @@
 //
 // El contenido es inventado a proposito (ver plan, punto 7): los datos reales
 // del distribuidor llegan por el importador de la Fase 6.
-import { mkdirSync, writeFileSync, rmSync, existsSync, statSync } from 'node:fs'
+import { mkdirSync, writeFileSync, rmSync, existsSync, statSync, readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -762,8 +762,16 @@ const indexEntry = {
   version: pack.version,
   piezas: piezas.length,
   sizeMb,
+  protegido: false, // el mock es libre; los packs reales del cliente van protegidos
 }
-writeFileSync(join(OUT_DIR, '..', 'index.json'), JSON.stringify([indexEntry], null, 2) + '\n', 'utf8')
+// Preservar otras entradas del index (ej. packs protegidos agregados a mano);
+// solo se reemplaza la del mock por su version fresca.
+const indexPath = join(OUT_DIR, '..', 'index.json')
+const previas: Array<{ packId: string }> = existsSync(indexPath)
+  ? (JSON.parse(readFileSync(indexPath, 'utf8')) as Array<{ packId: string }>)
+  : []
+const otras = previas.filter((e) => e.packId !== indexEntry.packId)
+writeFileSync(indexPath, JSON.stringify([indexEntry, ...otras], null, 2) + '\n', 'utf8')
 
 const totalMb = Math.round((assets.reduce((a, x) => a + x.kb, 0) / 1024) * 100) / 100
 console.log(

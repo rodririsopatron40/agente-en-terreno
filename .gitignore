@@ -20,3 +20,7 @@ npm-debug.log*
 *.suo
 *.sw?
 .gstack/
+
+# Contenido real del cliente - NUNCA al repo publico
+material-pv-e/
+material-pv-e.zip

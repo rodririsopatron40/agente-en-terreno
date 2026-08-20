@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/packs/[...path].ts": {
+      "includeFiles": "api/_data/**"
+    }
+  }
+}

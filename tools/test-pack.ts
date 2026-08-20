@@ -8,6 +8,7 @@ import { toggleMarcado, progresoResumen } from '../app/src/domain/checklist'
 import { validarEstructuraArbol, hojasDeArbol } from '../app/src/domain/arbolDiagnostico'
 import { nodoEnRuta, esHoja, esRama } from '../app/src/domain/diagnostico'
 import { clampCantidad, construirMensaje, mailtoLink, waLink } from '../app/src/domain/pedido'
+import { contentTypePack, rutaSegura } from '../app/src/domain/rutaPack'
 import type { NodoDiagnostico, Orden, Pack } from '../app/src/domain/types'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -192,6 +193,27 @@ check('clampCantidad(3) = 3', clampCantidad(3) === 3)
   check('mailtoLink arma subject y body', link.startsWith('mailto:a@b.cl?subject=') && link.includes('&body='))
   check('mailtoLink codifica saltos de linea', link.includes('%0A'))
 }
+
+// --- Ticket seguridad demo: ruta segura de la funcion /api/packs ---
+// Rutas legitimas pasan.
+check('rutaSegura acepta pack.json', rutaSegura(['cliente-demo', 'pack.json']) === 'cliente-demo/pack.json')
+check(
+  'rutaSegura acepta asset anidado',
+  rutaSegura(['cliente-demo', 'assets', 'x.png']) === 'cliente-demo/assets/x.png',
+)
+// Traversal y separadores se rechazan (null).
+check('rutaSegura rechaza ..', rutaSegura(['cliente-demo', '..', 'secreto']) === null)
+check('rutaSegura rechaza . solo', rutaSegura(['.', 'pack.json']) === null)
+check('rutaSegura rechaza separador embebido', rutaSegura(['a/b', 'pack.json']) === null)
+check('rutaSegura rechaza backslash', rutaSegura(['a\\b']) === null)
+check('rutaSegura rechaza byte nulo', rutaSegura(['a\0b']) === null)
+check('rutaSegura rechaza vacio', rutaSegura([]) === null)
+check('rutaSegura rechaza segmento vacio', rutaSegura(['', 'pack.json']) === null)
+check('rutaSegura rechaza no-array', rutaSegura('pack.json') === null)
+// Content-type por extension.
+check('contentTypePack json', contentTypePack('a/pack.json') === 'application/json; charset=utf-8')
+check('contentTypePack png', contentTypePack('a/x.png') === 'image/png')
+check('contentTypePack desconocido -> octet-stream', contentTypePack('a/x.bin') === 'application/octet-stream')
 
 console.log(fallas ? `\n${fallas} FALLA(s)` : '\nTODO OK')
 process.exit(fallas ? 1 : 0)

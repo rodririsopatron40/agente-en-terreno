@@ -6,6 +6,17 @@
     "categoria": "Martillo hidráulico",
     "version": 2,
     "piezas": 20,
-    "sizeMb": 0.87
+    "sizeMb": 0.87,
+    "protegido": false
+  },
+  {
+    "packId": "cliente-demo",
+    "path": "cliente-demo",
+    "nombre": "Cliente Demo (protegido)",
+    "categoria": "Martillo hidráulico",
+    "version": 2,
+    "piezas": 20,
+    "sizeMb": 0.8,
+    "protegido": true
   }
 ]
